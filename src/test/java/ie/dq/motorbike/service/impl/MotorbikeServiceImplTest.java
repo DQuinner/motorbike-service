@@ -2,17 +2,14 @@ package ie.dq.motorbike.service.impl;
 
 import ie.dq.motorbike.domain.Motorbike;
 import ie.dq.motorbike.repository.MotorbikeRepository;
+import ie.dq.motorbike.util.MotorbikeTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -28,9 +25,9 @@ public class MotorbikeServiceImplTest {
 
     @Test
     public void testCreateMotorbikeNew(){
-        Motorbike motorbike = newMotorbike();
+        Motorbike motorbike = MotorbikeTestData.newMotorbike();
 
-        when(motorbikeRepository.save(motorbike)).thenReturn(createdMotorbike());
+        when(motorbikeRepository.save(motorbike)).thenReturn(MotorbikeTestData.createdMotorbike());
         when(motorbikeRepository.existsMotorbikeByMakeAndModel(motorbike.getMake(), motorbike.getModel())).thenReturn(false);
 
         Motorbike created = motorbikeService.createMotorbike(motorbike);
@@ -46,7 +43,7 @@ public class MotorbikeServiceImplTest {
 
     @Test
     public void testCreateMotorbikeExisting(){
-        Motorbike motorbike = newMotorbike();
+        Motorbike motorbike = MotorbikeTestData.newMotorbike();
 
         when(motorbikeRepository.existsMotorbikeByMakeAndModel(motorbike.getMake(), motorbike.getModel())).thenReturn(true);
 
@@ -63,30 +60,9 @@ public class MotorbikeServiceImplTest {
 
     @Test
     public void testGetMotorbikes(){
-        when(motorbikeRepository.findAll(any(Pageable.class))).thenReturn(motorbikePage());
+        when(motorbikeRepository.findAll(any(Pageable.class))).thenReturn(MotorbikeTestData.motorbikePage());
         Page<Motorbike> motorbikes = motorbikeService.getMotorbikes();
         assertNotNull(motorbikes);
-    }
-
-    private Motorbike newMotorbike(){
-        Motorbike motorbike = new Motorbike();
-        motorbike.setMake("Motorbike Test Make");
-        motorbike.setModel("Motorbike Test Model");
-        motorbike.setType("Motorbike Test Type");
-        return motorbike;
-    }
-
-    private Motorbike createdMotorbike(){
-        Motorbike motorbike = newMotorbike();
-        motorbike.setId(1l);
-        return motorbike;
-    }
-
-    private Page motorbikePage(){
-        List<Motorbike> motorbikeList = new LinkedList();
-        motorbikeList.add(newMotorbike());
-        motorbikeList.add(newMotorbike());
-        return new PageImpl(motorbikeList);
     }
 
 }
