@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ie.dq.motorbike.service.impl.MotorbikeServiceImplTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2019-01-29T17:11:56" hostname="Donals-MacBook-Pro.local" time="0.052">
+  <properties/>
+  <testcase name="testCreateMotorbikeNew" classname="ie.dq.motorbike.service.impl.MotorbikeServiceImplTest" time="0.026"/>
+  <testcase name="testCreateMotorbikeExisting" classname="ie.dq.motorbike.service.impl.MotorbikeServiceImplTest" time="0.001"/>
+  <testcase name="testGetMotorbikes" classname="ie.dq.motorbike.service.impl.MotorbikeServiceImplTest" time="0.022"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
