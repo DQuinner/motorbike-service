@@ -11,9 +11,9 @@ public class MotorbikeTestData {
 
     public static Motorbike newMotorbike(){
         Motorbike motorbike = new Motorbike();
-        motorbike.setMake("Motorbike Test Make");
-        motorbike.setModel("Motorbike Test Model");
-        motorbike.setType("Motorbike Test Type");
+        motorbike.setMake("Test Make");
+        motorbike.setModel("Test Model");
+        motorbike.setType("Test Type");
         return motorbike;
     }
 
