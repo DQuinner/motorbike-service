@@ -21,4 +21,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.1.2.RELEASE'
     compile group: 'com.h2database', name: 'h2', version: '1.4.197'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.2.RELEASE'
+    testCompile group: 'io.cucumber', name: 'cucumber-java', version: '4.2.2'
+    testCompile group: 'io.cucumber', name: 'cucumber-junit', version: '4.2.2'
+    testCompile group: 'io.cucumber', name: 'cucumber-spring', version: '4.2.2'
 }

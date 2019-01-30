@@ -1,4 +1,4 @@
-package ie.dq.motorbike.util;
+package unit.ie.dq.motorbike.util;
 
 import ie.dq.motorbike.domain.Motorbike;
 import org.springframework.data.domain.Page;
