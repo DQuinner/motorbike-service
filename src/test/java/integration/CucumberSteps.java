@@ -1,38 +1,49 @@
 package integration;
 
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import ie.dq.motorbike.domain.Motorbike;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import unit.ie.dq.motorbike.util.MotorbikeTestData;
+import org.springframework.http.*;
 
+import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class CucumberSteps extends CucumberRoot {
 
-    private ResponseEntity response;
+    private ResponseEntity responseEntity;
 
-    @When("^the client calls GET /health$")
-    public void the_client_issues_GET_health() throws Throwable {
-        response = restTemplate.getForEntity("/actuator/health", String.class);
+    @Given("no motorbikes exist in the database")
+    public void no_motorbikes_exist() throws Throwable {
+        responseEntity = restTemplate.getForEntity("/motorbikes", String.class);
+        assertNull(responseEntity.getBody());
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
-    @When("^the client calls GET /motorbikes$")
-    public void the_client_issues_GET_motorbikes() throws Throwable {
-        response = restTemplate.getForEntity("/motorbikes", String.class);
+    //2DO Improve this logic to check for specific bike
+    @Given("motorbike with make {string} and model {string} exists in the database")
+    public void motorbike_exist(String make, String model) throws Throwable {
+        responseEntity = restTemplate.getForEntity("/motorbikes", String.class);
+        assertNotNull(responseEntity.getBody());
     }
 
-    @When("^the client calls POST /motorbikes$")
-    public void the_client_issues_POST_motorbikes() throws Throwable {
-        response = restTemplate.postForEntity("/motorbikes", MotorbikeTestData.newMotorbike(), Motorbike.class);
+    @When("the client calls GET {string}")
+    public void the_client_issues_GET_url(String url) throws Throwable {
+        responseEntity = restTemplate.getForEntity(url, String.class);
+        assertNotNull(responseEntity);
     }
 
-    @Then("^the client receives response status code of (\\d+)$")
+    @When("the client calls POST {string} with body {string}")
+    public void the_client_issues_POST_url_with_body(String url, String body) throws Throwable {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        responseEntity = restTemplate.postForEntity(url, new HttpEntity<>(body, headers), String.class);
+        assertNotNull(responseEntity);
+    }
+
+    @Then("the client receives response status code of {int}")
     public void the_client_receives_status_code_of(int statusCode) throws Throwable {
-        HttpStatus currentStatusCode = response.getStatusCode();
-
-        assertThat("status code is incorrect : " +response.getBody(), currentStatusCode.value(), is(statusCode));
+        HttpStatus currentStatusCode = responseEntity.getStatusCode();
+        assertThat("status code is incorrect : " +responseEntity.getBody(), currentStatusCode.value(), is(statusCode));
     }
 }
