@@ -4,17 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ie.dq.motorbike.domain.Motorbike;
 import ie.dq.motorbike.service.MotorbikeService;
 import ie.dq.motorbike.util.MotorbikeTestData;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.LinkedList;
 
@@ -22,17 +23,24 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(value = MotorbikeController.class)
+@RunWith(MockitoJUnitRunner.class)
 public class MotorbikeControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private MotorbikeService motorbikeService;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @InjectMocks
+    private MotorbikeController motorbikeController;
+
+    private ObjectMapper objectMapper;
+
+    @Before
+    public void setup() {
+        this.objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(motorbikeController).build();
+    }
 
     @Test
     public void testGetMotorbikes() throws Exception {
@@ -104,8 +112,6 @@ public class MotorbikeControllerTest {
 
     @Test
     public void testCreateMotorbikeBadRequest() throws Exception {
-        when(motorbikeService.createMotorbike(MotorbikeTestData.newMotorbike())).thenReturn(new Motorbike());
-
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/motorbikes")
                 .content("BAD_REQUEST")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
