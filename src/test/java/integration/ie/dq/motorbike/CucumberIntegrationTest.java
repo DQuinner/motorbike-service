@@ -1,4 +1,4 @@
-package integration;
+package integration.ie.dq.motorbike;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;

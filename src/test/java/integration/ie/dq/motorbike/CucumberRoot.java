@@ -1,4 +1,4 @@
-package integration;
+package integration.ie.dq.motorbike;
 
 import ie.dq.motorbike.MotorbikeApp;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
-                gradlew('test')
+                gradlew('test', 'jacocoTestReport')
             }
             post {
                 always {
