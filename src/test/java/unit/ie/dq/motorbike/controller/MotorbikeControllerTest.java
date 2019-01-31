@@ -103,9 +103,6 @@ public class MotorbikeControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isConflict())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().string(objectMapper.writeValueAsString(MotorbikeTestData.newMotorbike())))
                 .andReturn();
 
         verify(motorbikeService).createMotorbike(MotorbikeTestData.newMotorbike());
