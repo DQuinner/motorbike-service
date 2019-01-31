@@ -1,6 +1,10 @@
 plugins {
-    id 'java'
+    id "java"
+    id "jacoco"
+    id "org.sonarqube" version "2.6"
 }
+
+apply plugin: 'maven'
 
 group 'ie.dq'
 version '1.0-SNAPSHOT'
@@ -13,6 +17,44 @@ repositories {
 
 jar {
     baseName = 'motorbike-service'
+}
+
+test {
+    useJUnit {
+        includeCategories 'ie.dq.motorbike.category.Unit'
+        excludeCategories 'ie.dq.motorbike.category.Integration'
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnit {
+        excludeCategories 'ie.dq.motorbike.category.Unit'
+    }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.organization', 'dquinner-github'
+        property 'sonar.login', System.getenv('SONAR_LOGIN')
+        property 'sonar.projectKey', 'DQuinner_motorbike-service'
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 1.0
+            }
+            excludes = [
+                    'ie.dq.motorbike.MotorbikeApp'
+            ]
+        }
+    }
 }
 
 dependencies {

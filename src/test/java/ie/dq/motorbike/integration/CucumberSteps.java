@@ -1,4 +1,4 @@
-package integration;
+package ie.dq.motorbike.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
