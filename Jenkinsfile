@@ -53,11 +53,18 @@ pipeline {
             }
         }
         stage('Code Analysis') {
-            environment {
-                SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
-            }
-            steps {
-                gradlew('sonarqube')
+            parallel {
+                stage('Sonar'){
+                    environment {
+                        SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
+                    }
+                    steps {
+                        gradlew('sonarqube')
+                    }
+                }
+                stage('Code Coverage'){
+                    gradlew('jacocoTestCoverageVerification')
+                }
             }
         }
         stage('Assemble') {

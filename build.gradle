@@ -39,6 +39,22 @@ sonarqube {
     }
 }
 
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 1.0
+            }
+            excludes = [
+                    'ie.dq.motorbike.MotorbikeApp'
+            ]
+        }
+    }
+}
+
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.2.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.2.RELEASE'
