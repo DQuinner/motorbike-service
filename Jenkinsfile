@@ -1,11 +1,12 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('*/5 * * * *')
-    }
-
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
         stage('Compile') {
             steps {
                 gradlew('clean', 'classes')
@@ -14,6 +15,14 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 gradlew('test', 'jacocoTestReport')
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/reports/tests/test/',
+                        reportFiles: 'index.html',
+                        reportName: 'Test Summary'
+                ]
                 publishHTML target: [
                         allowMissing: false,
                         alwaysLinkToLastBuild: false,
