@@ -26,14 +26,8 @@ test {
     }
 }
 
-//task integrationTest(type: Test) << {
-//    exclude '**/Test.class'
-//    include "CucumberIntegrationTestRunner.class"
-//}
-
 task integrationTest(type: Test) {
     useJUnit {
-        //includeCategories 'ie.dq.motorbike.category.Integration'
         excludeCategories 'ie.dq.motorbike.category.Unit'
     }
 }
