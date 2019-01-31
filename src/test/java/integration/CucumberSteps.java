@@ -31,7 +31,7 @@ public class CucumberSteps extends CucumberRoot {
     public void motorbike_exists_in_the_database_of(String make, String model) throws Throwable {
         responseEntity = restTemplate.getForEntity("/motorbikes", String.class);
         assertNotNull(responseEntity.getBody());
-        JSONObject jsonMotorbike = getJSONMotorbike(make, model);
+        JSONObject jsonMotorbike = getJSONMotorbikeResponseBody(make, model);
         assertEquals(make, jsonMotorbike.getString("make"));
         assertEquals(model, jsonMotorbike.getString("model"));
     }
@@ -46,11 +46,7 @@ public class CucumberSteps extends CucumberRoot {
     public void the_client_calls_POST_motorbike_of(String make, String model, String type) throws Throwable {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Motorbike motorbike = new Motorbike();
-        motorbike.setMake(make);
-        motorbike.setModel(model);
-        motorbike.setType(type);
-        responseEntity = restTemplate.postForEntity("/motorbikes", new HttpEntity<>(motorbike, headers), String.class);
+        responseEntity = restTemplate.postForEntity("/motorbikes", new HttpEntity<>(motorbike(make,model,type), headers), String.class);
         assertNotNull(responseEntity);
     }
 
@@ -80,22 +76,30 @@ public class CucumberSteps extends CucumberRoot {
     public void the_response_body_contains_array_with_created_motorbike_of(String make, String model, String type) throws Throwable {
         String responseBody = (String) responseEntity.getBody();
         assertNotNull(responseBody);
-        JSONObject createdMotorbike = getJSONMotorbike(make, model);
+        JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model);
         assertTrue(0l<createdMotorbike.getLong("id"));
         assertEquals(make, createdMotorbike.getString("make"));
         assertEquals(model, createdMotorbike.getString("model"));
         assertEquals(type, createdMotorbike.getString("type"));
     }
 
-    private JSONObject getJSONMotorbike(String make, String model) throws JSONException {
+    private JSONObject getJSONMotorbikeResponseBody(String make, String model) throws JSONException {
         String responseBody = (String) responseEntity.getBody();
         JSONArray jsonMotorbikes = new JSONObject(responseBody).getJSONArray("content");
         for(int i = 0; i<jsonMotorbikes.length(); i++){
-            JSONObject jsonMotorbike = (JSONObject) jsonMotorbikes.get(i);
+            JSONObject jsonMotorbike = jsonMotorbikes.getJSONObject(i);
             if(make.equalsIgnoreCase(jsonMotorbike.getString("make")) && model.equalsIgnoreCase(jsonMotorbike.getString("model"))){
-                return  jsonMotorbike;
+                return jsonMotorbike;
             }
         }
         return new JSONObject();
+    }
+
+    private Motorbike motorbike(String make, String model, String type){
+        Motorbike motorbike = new Motorbike();
+        motorbike.setMake(make);
+        motorbike.setModel(model);
+        motorbike.setType(type);
+        return motorbike;
     }
 }
