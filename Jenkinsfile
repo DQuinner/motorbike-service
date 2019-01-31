@@ -14,7 +14,7 @@ pipeline {
         }
         stage('Test') {
             parallel {
-                stage('Unit Test') {
+                stage('Unit') {
                     steps {
                         gradlew('test', 'jacocoTestReport')
                         publishHTML target: [
@@ -40,7 +40,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Integration Test') {
+                stage('Integration') {
                     steps {
                         gradlew('integrationTest')
                     }
@@ -65,6 +65,11 @@ pipeline {
                 gradlew('assemble')
                 stash includes: '**/build/libs/*.jar', name: 'app'
             }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+                }
+            }
         }
         stage('Publish') {
             steps {
@@ -72,12 +77,6 @@ pipeline {
                 stash includes: '**/build/libs/*.jar', name: 'app'
             }
         }
-//        post {
-//            always {
-//                archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
-//                junit 'build/reports/**/*.xml'
-//            }
-//        }
 //        stage('Promotion') {
 ////            steps {
 ////                timeout(time: 1, unit:'DAYS') {
