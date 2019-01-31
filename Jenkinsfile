@@ -33,11 +33,11 @@ pipeline {
                 ]
             }
         }
-//        stage('Integration Tests') {
-//            steps {
-//                gradlew('integrationTest')
-//            }
-//        }
+        post {
+            always {
+                junit 'build/test-results/test/**/*.xml'
+            }
+        }
         stage('Long-running Verification') {
             environment {
                 SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
@@ -46,6 +46,11 @@ pipeline {
                 stage('Integration Tests') {
                     steps {
                         gradlew('integrationTest')
+                    }
+                }
+                post {
+                    always {
+                        junit 'build/test-results/integrationTest/**/*.xml'
                     }
                 }
                 stage('Code Analysis') {
