@@ -24,7 +24,7 @@ pipeline {
                                 keepAll: true,
                                 reportDir: 'build/reports/tests/test/',
                                 reportFiles: 'index.html',
-                                reportName: 'Unit Test Summary Report'
+                                reportName: 'Unit Test Report'
                         ]
                         publishHTML target: [
                                 allowMissing: false,
@@ -51,7 +51,15 @@ pipeline {
                                 keepAll: true,
                                 reportDir: 'build/reports/tests/integrationTest/',
                                 reportFiles: 'index.html',
-                                reportName: 'Integration Test Summary Report'
+                                reportName: 'Integration Test Report'
+                        ]
+                        publishHTML target: [
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: false,
+                                keepAll: true,
+                                reportDir: 'build/cucumber/',
+                                reportFiles: 'index.html',
+                                reportName: 'Cucumber Report'
                         ]
                     }
                     post {
