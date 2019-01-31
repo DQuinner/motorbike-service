@@ -60,12 +60,18 @@ pipeline {
 //                }
 //            }
 //        }
-//        stage('Assemble') {
-////            steps {
-////                gradlew('assemble')
-////                stash includes: '**/build/libs/*.war', name: 'app'
-////            }
-//        }
+        stage('Assemble') {
+            steps {
+                gradlew('assemble')
+                stash includes: '**/build/libs/*.jar', name: 'app'
+            }
+        }
+        stage('Publish') {
+            steps {
+                gradlew('install')
+                stash includes: '**/build/libs/*.jar', name: 'app'
+            }
+        }
 //        stage('Promotion') {
 ////            steps {
 ////                timeout(time: 1, unit:'DAYS') {

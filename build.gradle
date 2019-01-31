@@ -3,6 +3,8 @@ plugins {
     id "jacoco"
 }
 
+apply plugin: 'maven'
+
 group 'ie.dq'
 version '1.0-SNAPSHOT'
 
