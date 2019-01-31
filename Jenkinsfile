@@ -14,8 +14,6 @@ pipeline {
         stage('Unit Tests') {
             steps {
                 gradlew('test', 'jacocoTestReport')
-            }
-            post{
                 publishHTML target: [
                         allowMissing: false,
                         alwaysLinkToLastBuild: false,
