@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import ie.dq.motorbike.domain.Motorbike;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,11 +42,15 @@ public class CucumberSteps extends CucumberRoot {
         assertNotNull(responseEntity);
     }
 
-    @When("the client calls POST {string} with body {string}")
-    public void the_client_issues_POST_url_with_body(String url, String body) throws Throwable {
+    @When("the client calls POST /motorbikes with motorbike of {string} {string} {string}")
+    public void the_client_calls_POST_motorbike_of(String make, String model, String type) throws Throwable {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        responseEntity = restTemplate.postForEntity(url, new HttpEntity<>(body, headers), String.class);
+        Motorbike motorbike = new Motorbike();
+        motorbike.setMake(make);
+        motorbike.setModel(model);
+        motorbike.setType(type);
+        responseEntity = restTemplate.postForEntity("/motorbikes", new HttpEntity<>(motorbike, headers), String.class);
         assertNotNull(responseEntity);
     }
 
