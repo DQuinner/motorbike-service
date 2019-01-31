@@ -23,7 +23,7 @@ public class CucumberSteps extends CucumberRoot {
     @Given("no motorbikes exist in the database")
     public void no_motorbikes_exist_in_the_database() throws Throwable {
         responseEntity = restTemplate.getForEntity("/motorbikes", String.class);
-        assertNotNull(responseEntity.getBody());
+        assertNull(responseEntity.getBody());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 

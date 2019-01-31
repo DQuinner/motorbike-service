@@ -23,11 +23,8 @@ test {
     }
 }
 
-task integrationTest(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
-    useJUnit{
-        includeCategories 'ie.dq.motorbike.category.IntegrationTest'
-        excludeCategories 'ie.dq.motorbike.category.UnitTest'
-    }
+task integrationTest(type: Test) << {
+    include "CucumberIntegrationTest.class"
 }
 
 dependencies {
