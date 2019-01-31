@@ -17,6 +17,7 @@ pipeline {
                 stage('Unit') {
                     steps {
                         gradlew('test', 'jacocoTestReport')
+
                         publishHTML target: [
                                 allowMissing: false,
                                 alwaysLinkToLastBuild: false,
@@ -43,6 +44,15 @@ pipeline {
                 stage('Integration') {
                     steps {
                         gradlew('integrationTest')
+
+                        publishHTML target: [
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: false,
+                                keepAll: true,
+                                reportDir: 'build/reports/tests/integrationTest/',
+                                reportFiles: 'index.html',
+                                reportName: 'Integration Test Summary Report'
+                        ]
                     }
                     post {
                         always {
