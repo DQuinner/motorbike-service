@@ -12,38 +12,35 @@ pipeline {
                 gradlew('clean', 'classes')
             }
         }
-        stage('Unit Tests') {
-            steps {
-                gradlew('test', 'jacocoTestReport')
-                publishHTML target: [
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'build/reports/tests/test/',
-                        reportFiles: 'index.html',
-                        reportName: 'Unit Test Summary Report'
-                ]
-                publishHTML target: [
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'build/reports/jacoco/test/html/',
-                        reportFiles: 'index.html',
-                        reportName: 'Code Coverage Report'
-                ]
-            }
-            post {
-                always {
-                    junit 'build/test-results/test/**/*.xml'
-                }
-            }
-        }
-        stage('Long-running Verification') {
-            environment {
-                SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
-            }
+        stage('Test') {
             parallel {
-                stage('Integration Tests') {
+                stage('Unit Test') {
+                    steps {
+                        gradlew('test', 'jacocoTestReport')
+                        publishHTML target: [
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: false,
+                                keepAll: true,
+                                reportDir: 'build/reports/tests/test/',
+                                reportFiles: 'index.html',
+                                reportName: 'Unit Test Summary Report'
+                        ]
+                        publishHTML target: [
+                                allowMissing: false,
+                                alwaysLinkToLastBuild: false,
+                                keepAll: true,
+                                reportDir: 'build/reports/jacoco/test/html/',
+                                reportFiles: 'index.html',
+                                reportName: 'Code Coverage Report'
+                        ]
+                    }
+                    post {
+                        always {
+                            junit 'build/test-results/test/**/*.xml'
+                        }
+                    }
+                }
+                stage('Integration Test') {
                     steps {
                         gradlew('integrationTest')
                     }
@@ -53,11 +50,14 @@ pipeline {
                         }
                     }
                 }
-                stage('Code Analysis') {
-                    steps {
-                        gradlew('sonarqube')
-                    }
-                }
+            }
+        }
+        stage('Code Analysis') {
+            environment {
+                SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
+            }
+            steps {
+                gradlew('sonarqube')
             }
         }
         stage('Assemble') {
