@@ -63,7 +63,9 @@ pipeline {
                     }
                 }
                 stage('Code Coverage'){
-                    gradlew('jacocoTestCoverageVerification')
+                    steps {
+                        gradlew('jacocoTestCoverageVerification')
+                    }
                 }
             }
         }
