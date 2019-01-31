@@ -1,9 +1,10 @@
-package ie.dq.motorbike.controller;
+package unit.ie.dq.motorbike.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ie.dq.motorbike.controller.MotorbikeController;
 import ie.dq.motorbike.domain.Motorbike;
 import ie.dq.motorbike.service.MotorbikeService;
-import ie.dq.motorbike.util.MotorbikeTestData;
+import unit.ie.dq.motorbike.util.MotorbikeTestData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,9 +103,6 @@ public class MotorbikeControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isConflict())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().string(objectMapper.writeValueAsString(MotorbikeTestData.newMotorbike())))
                 .andReturn();
 
         verify(motorbikeService).createMotorbike(MotorbikeTestData.newMotorbike());

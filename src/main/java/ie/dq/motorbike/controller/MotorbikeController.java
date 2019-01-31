@@ -45,7 +45,7 @@ public class MotorbikeController {
             return new ResponseEntity(result, HttpStatus.CREATED);
         }else{
             logger.error("Motorbike {} {} already exists", motorbike.getMake(), motorbike.getModel());
-            return new ResponseEntity(motorbike, HttpStatus.CONFLICT);
+            return new ResponseEntity(HttpStatus.CONFLICT);
         }
     }
 
