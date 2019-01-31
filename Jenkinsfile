@@ -15,11 +15,14 @@ pipeline {
             steps {
                 gradlew('test', 'jacocoTestReport')
             }
-            post {
-                always {
-                    junit '**/build/test-results/test/TEST-*.xml'
-                }
-            }
+            publishHTML target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: '/build/reports/jacoco/test/html/',
+                    reportFiles: 'index.html',
+                    reportName: 'Jacoco Test Report'
+            ]
         }
 //        stage('Long-running Verification') {
 ////            environment {
