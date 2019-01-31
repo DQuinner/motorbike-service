@@ -15,14 +15,16 @@ pipeline {
             steps {
                 gradlew('test', 'jacocoTestReport')
             }
-            publishHTML target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: '/build/reports/jacoco/test/html/',
-                    reportFiles: 'index.html',
-                    reportName: 'Jacoco Test Report'
-            ]
+            post{
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: '/build/reports/jacoco/test/html/',
+                        reportFiles: 'index.html',
+                        reportName: 'Jacoco Test Report'
+                ]
+            }
         }
 //        stage('Long-running Verification') {
 ////            environment {
