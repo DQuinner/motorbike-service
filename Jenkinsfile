@@ -32,6 +32,11 @@ pipeline {
                         reportName: 'Code Coverage Report'
                 ]
             }
+            post {
+                always {
+                    junit 'build/reports/**/*.xml'
+                }
+            }
         }
         stage('Long-running Verification') {
             environment {
@@ -62,12 +67,12 @@ pipeline {
                 stash includes: '**/build/libs/*.jar', name: 'app'
             }
         }
-        post {
-            always {
-                archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
-                junit 'build/reports/**/*.xml'
-            }
-        }
+//        post {
+//            always {
+//                archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+//                junit 'build/reports/**/*.xml'
+//            }
+//        }
 //        stage('Promotion') {
 ////            steps {
 ////                timeout(time: 1, unit:'DAYS') {
