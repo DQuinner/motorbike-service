@@ -47,6 +47,11 @@ pipeline {
                     steps {
                         gradlew('integrationTest')
                     }
+                    post {
+                        always {
+                            junit 'build/test-results/integrationTest/**/*.xml'
+                        }
+                    }
                 }
                 stage('Code Analysis') {
                     steps {
