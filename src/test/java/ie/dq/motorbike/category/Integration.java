@@ -1,4 +1,4 @@
 package ie.dq.motorbike.category;
 
-public class IntegrationTest {
+public class Integration {
 }
