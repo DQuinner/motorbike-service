@@ -21,8 +21,8 @@ jar {
 
 test {
     useJUnit {
-        includeCategories 'ie.dq.motorbike.category.UnitTest'
-        excludeCategories 'ie.dq.motorbike.category.IntegrationTest'
+        includeCategories 'ie.dq.motorbike.category.Unit'
+        excludeCategories 'ie.dq.motorbike.category.Integration'
     }
 }
 
