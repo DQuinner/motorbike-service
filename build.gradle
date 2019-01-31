@@ -30,6 +30,15 @@ task integrationTest(type: Test) << {
     include "CucumberIntegrationTest.class"
 }
 
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.organization', 'dquinner-github'
+        property 'sonar.login', System.getenv('SONAR_LOGIN')
+        property 'sonar.projectKey', 'DQuinner_motorbike-service'
+    }
+}
+
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.1.2.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.1.2.RELEASE'
