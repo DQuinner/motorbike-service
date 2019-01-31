@@ -80,7 +80,7 @@ pipeline {
                         gradlew('sonarqube')
                     }
                 }
-                stage('Code Coverage'){
+                stage('Coverage'){
                     steps {
                         gradlew('jacocoTestCoverageVerification')
                     }
