@@ -112,19 +112,19 @@ pipeline {
         stage('Promotion') {
             steps {
                 timeout(time: 1, unit:'DAYS') {
-                    input 'Deploy to Production?'
+                    input 'Deploy?'
                 }
             }
         }
-        stage('Deploy to Production') {
-            sleep 1
+        stage('Deploy') {
 //            environment {
 //                HEROKU_API_KEY = credentials('HEROKU_API_KEY')
 //            }
-//            steps {
+            steps {
+                sleep 1
 //                unstash 'app'
 //                gradlew('deployHeroku')
-//            }
+            }
         }
     }
 }
