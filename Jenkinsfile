@@ -109,7 +109,7 @@ pipeline {
                 sleep 1
             }
         }
-        stage('Promotion') {
+        stage('Promote') {
             steps {
                 timeout(time: 1, unit:'DAYS') {
                     input 'Deploy?'
