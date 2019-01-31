@@ -33,11 +33,6 @@ pipeline {
                 ]
             }
         }
-        post {
-            always {
-                junit 'build/test-results/test/**/*.xml'
-            }
-        }
         stage('Long-running Verification') {
             environment {
                 SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
@@ -46,11 +41,6 @@ pipeline {
                 stage('Integration Tests') {
                     steps {
                         gradlew('integrationTest')
-                    }
-                }
-                post {
-                    always {
-                        junit 'build/test-results/integrationTest/**/*.xml'
                     }
                 }
                 stage('Code Analysis') {
@@ -70,6 +60,12 @@ pipeline {
             steps {
                 gradlew('install')
                 stash includes: '**/build/libs/*.jar', name: 'app'
+            }
+        }
+        post {
+            always {
+                archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+                junit 'build/reports/**/*.xml'
             }
         }
 //        stage('Promotion') {
