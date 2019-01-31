@@ -56,6 +56,12 @@ public class CucumberSteps extends CucumberRoot {
         assertThat("status code is incorrect : " +responseEntity.getBody(), currentStatusCode.value(), is(statusCode));
     }
 
+    @Then("the health status is UP")
+    public void the_health_status_is_up() throws Throwable {
+        assertNotNull(responseEntity.getBody());
+        assertTrue(String.valueOf(responseEntity.getBody()).contains("\"status\" : \"UP\""));
+    }
+
     @Then("the response body is empty")
     public void the_response_body_is_empty() throws Throwable {
         assertNull(responseEntity.getBody());
@@ -63,9 +69,8 @@ public class CucumberSteps extends CucumberRoot {
 
     @Then("the response body contains created motorbike of {string} {string} {string}")
     public void the_response_body_contains_created_motorbike_of(String make, String model, String type) throws Throwable {
-        String responseBody = (String) responseEntity.getBody();
-        assertNotNull(responseBody);
-        JSONObject createdMotorbike = new JSONObject(responseBody);
+        assertNotNull(responseEntity.getBody());
+        JSONObject createdMotorbike = new JSONObject(String.valueOf(responseEntity.getBody()));
         assertTrue(0l<createdMotorbike.getLong("id"));
         assertEquals(make, createdMotorbike.getString("make"));
         assertEquals(model, createdMotorbike.getString("model"));
@@ -74,8 +79,7 @@ public class CucumberSteps extends CucumberRoot {
 
     @Then("the response body contains array with created motorbike of {string} {string} {string}")
     public void the_response_body_contains_array_with_created_motorbike_of(String make, String model, String type) throws Throwable {
-        String responseBody = (String) responseEntity.getBody();
-        assertNotNull(responseBody);
+        assertNotNull(responseEntity.getBody());
         JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model);
         assertTrue(0l<createdMotorbike.getLong("id"));
         assertEquals(make, createdMotorbike.getString("make"));
@@ -84,8 +88,7 @@ public class CucumberSteps extends CucumberRoot {
     }
 
     private JSONObject getJSONMotorbikeResponseBody(String make, String model) throws JSONException {
-        String responseBody = (String) responseEntity.getBody();
-        JSONArray jsonMotorbikes = new JSONObject(responseBody).getJSONArray("content");
+        JSONArray jsonMotorbikes = new JSONObject(String.valueOf(responseEntity.getBody())).getJSONArray("content");
         for(int i = 0; i<jsonMotorbikes.length(); i++){
             JSONObject jsonMotorbike = jsonMotorbikes.getJSONObject(i);
             if(make.equalsIgnoreCase(jsonMotorbike.getString("make")) && model.equalsIgnoreCase(jsonMotorbike.getString("model"))){
