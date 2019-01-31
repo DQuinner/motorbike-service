@@ -1,9 +1,7 @@
-//plugins {
-//    id 'java'
-//    id 'jacoco'
-//}
-apply plugin: "java"
-apply plugin: "jacoco"
+plugins {
+    id "java"
+    id "jacoco"
+}
 
 group 'ie.dq'
 version '1.0-SNAPSHOT'
@@ -16,6 +14,20 @@ repositories {
 
 jar {
     baseName = 'motorbike-service'
+}
+
+test {
+    useJUnit {
+        includeCategories 'ie.dq.motorbike.category.UnitTest'
+        excludeCategories 'ie.dq.motorbike.category.IntegrationTest'
+    }
+}
+
+task integrationTest(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
+    useJUnit{
+        includeCategories 'ie.dq.motorbike.category.IntegrationTest'
+        excludeCategories 'ie.dq.motorbike.category.UnitTest'
+    }
 }
 
 dependencies {

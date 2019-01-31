@@ -1,4 +1,4 @@
-package integration.ie.dq.motorbike;
+package ie.dq.motorbike.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
@@ -23,7 +23,7 @@ public class CucumberSteps extends CucumberRoot {
     @Given("no motorbikes exist in the database")
     public void no_motorbikes_exist_in_the_database() throws Throwable {
         responseEntity = restTemplate.getForEntity("/motorbikes", String.class);
-        assertNull(responseEntity.getBody());
+        assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 

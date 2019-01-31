@@ -1,9 +1,11 @@
-package unit.ie.dq.motorbike.service.impl;
+package ie.dq.motorbike.unit.service.impl;
 
+import ie.dq.motorbike.category.UnitTest;
 import ie.dq.motorbike.domain.Motorbike;
 import ie.dq.motorbike.repository.MotorbikeRepository;
 import ie.dq.motorbike.service.impl.MotorbikeServiceImpl;
-import unit.ie.dq.motorbike.util.MotorbikeTestData;
+import org.junit.experimental.categories.Category;
+import ie.dq.motorbike.unit.util.MotorbikeTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +18,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
+@Category(UnitTest.class)
 public class MotorbikeServiceImplTest {
 
     @Mock

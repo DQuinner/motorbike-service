@@ -1,6 +1,4 @@
 pipeline {
-    agent any
-
     stages {
         stage('Checkout') {
             steps {
@@ -21,7 +19,7 @@ pipeline {
                         keepAll: true,
                         reportDir: 'build/reports/tests/test/',
                         reportFiles: 'index.html',
-                        reportName: 'Test Summary Report'
+                        reportName: 'Unit Test Summary Report'
                 ]
                 publishHTML target: [
                         allowMissing: false,
@@ -31,14 +29,11 @@ pipeline {
                         reportFiles: 'index.html',
                         reportName: 'Code Coverage Report'
                 ]
-                publishHTML target: [
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'build/cucumber/',
-                        reportFiles: 'index.html',
-                        reportName: 'Cucumber Features Report'
-                ]
+            }
+        }
+        stage('Integration Tests') {
+            steps {
+                gradlew('integrationTest')
             }
         }
 //        stage('Long-running Verification') {
