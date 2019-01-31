@@ -21,7 +21,7 @@ pipeline {
                         keepAll: true,
                         reportDir: 'build/reports/tests/test/',
                         reportFiles: 'index.html',
-                        reportName: 'Test Summary'
+                        reportName: 'Test Summary Report'
                 ]
                 publishHTML target: [
                         allowMissing: false,
@@ -29,7 +29,15 @@ pipeline {
                         keepAll: true,
                         reportDir: 'build/reports/jacoco/test/html/',
                         reportFiles: 'index.html',
-                        reportName: 'Jacoco Test Report'
+                        reportName: 'Code Coverage Report'
+                ]
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/cucumber/',
+                        reportFiles: 'index.html',
+                        reportName: 'Cucumber Features Report'
                 ]
             }
         }
