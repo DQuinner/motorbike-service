@@ -106,7 +106,7 @@ pipeline {
         }
         stage('Acceptance Test') {
             steps {
-                sleep 1
+                sleep 1 //2DO feature/acceptance-test
             }
         }
         stage('Promote') {
@@ -117,13 +117,8 @@ pipeline {
             }
         }
         stage('Deploy') {
-//            environment {
-//                HEROKU_API_KEY = credentials('HEROKU_API_KEY')
-//            }
             steps {
-                sleep 1
-//                unstash 'app'
-//                gradlew('deployHeroku')
+                sleep 1 //2DO feature/cloud-foundry
             }
         }
     }
