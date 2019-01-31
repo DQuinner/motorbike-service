@@ -18,7 +18,7 @@ pipeline {
                         allowMissing: false,
                         alwaysLinkToLastBuild: false,
                         keepAll: true,
-                        reportDir: '**/build/reports/jacoco/test/html/',
+                        reportDir: 'build/reports/jacoco/test/html/',
                         reportFiles: 'index.html',
                         reportName: 'Jacoco Test Report'
                 ]
@@ -69,11 +69,11 @@ pipeline {
 ////            }
 //        }
     }
-    post {
-        failure {
-            mail to: 'donalq@gmail.com', subject: 'Build failed', body: 'Please fix!'
-        }
-    }
+//    post {
+//        failure {
+//            mail to: 'donalq@gmail.com', subject: 'Build failed', body: 'Please fix!'
+//        }
+//    }
 }
 
 def gradlew(String... args) {
