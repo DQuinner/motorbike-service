@@ -1,12 +1,10 @@
-package ie.dq.motorbike.unit.controller;
+package unit.ie.dq.motorbike.controller;
 
-import ie.dq.motorbike.category.Unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ie.dq.motorbike.controller.MotorbikeController;
 import ie.dq.motorbike.domain.Motorbike;
 import ie.dq.motorbike.service.MotorbikeService;
-import ie.dq.motorbike.unit.util.MotorbikeTestData;
-import org.junit.experimental.categories.Category;
+import util.MotorbikeTestData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
-@Category(Unit.class)
 public class MotorbikeControllerTest {
 
     private MockMvc mockMvc;

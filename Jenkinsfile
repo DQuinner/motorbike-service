@@ -106,7 +106,29 @@ pipeline {
         }
         stage('Acceptance Test') {
             steps {
-                sleep 1 //2DO feature/acceptance-test
+                gradlew('acceptanceTest')
+
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/reports/tests/acceptanceTest/',
+                        reportFiles: 'index.html',
+                        reportName: 'Acceptance Test Report'
+                ]
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/cucumber/',
+                        reportFiles: 'index.html',
+                        reportName: 'Cucumber Report'
+                ]
+            }
+            post {
+                always {
+                    junit 'build/test-results/acceptanceTest/**/*.xml'
+                }
             }
         }
         stage('Promote') {

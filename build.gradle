@@ -2,6 +2,7 @@ plugins {
     id "java"
     id "jacoco"
     id "org.sonarqube" version "2.6"
+    id 'org.springframework.boot' version '2.1.2.RELEASE'
 }
 
 apply plugin: 'maven'
@@ -20,15 +21,20 @@ jar {
 }
 
 test {
-    useJUnit {
-        includeCategories 'ie.dq.motorbike.category.Unit'
-        excludeCategories 'ie.dq.motorbike.category.Integration'
+    filter{
+        includeTestsMatching "unit.ie.dq.motorbike.*"
     }
 }
 
 task integrationTest(type: Test) {
-    useJUnit {
-        excludeCategories 'ie.dq.motorbike.category.Unit'
+    filter{
+        includeTestsMatching "integration.*"
+    }
+}
+
+task acceptanceTest(type: Test) {
+    filter{
+        includeTestsMatching "acceptance.*"
     }
 }
 

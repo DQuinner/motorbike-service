@@ -1,4 +1,4 @@
-package ie.dq.motorbike.integration;
+package acceptance;
 
 import ie.dq.motorbike.MotorbikeApp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 @SpringBootTest(classes = MotorbikeApp.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("INTEGRATION_TEST")
+@ActiveProfiles("ACCEPTANCE_TEST")
 @ContextConfiguration
 public class CucumberRoot {
 
