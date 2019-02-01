@@ -53,14 +53,6 @@ pipeline {
                                 reportFiles: 'index.html',
                                 reportName: 'Integration Test Report'
                         ]
-                        publishHTML target: [
-                                allowMissing: false,
-                                alwaysLinkToLastBuild: false,
-                                keepAll: true,
-                                reportDir: 'build/cucumber/',
-                                reportFiles: 'index.html',
-                                reportName: 'Cucumber Report'
-                        ]
                     }
                     post {
                         always {
