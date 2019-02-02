@@ -146,7 +146,7 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    sh "java -jar build/libs/motorbike-service-*.jar & disown -s"
+    sh "java -jar build/libs/motorbike-service-*.jar & disown"
     return
 }
 
