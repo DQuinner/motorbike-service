@@ -99,8 +99,7 @@ pipeline {
         stage('Acceptance Test') {
             steps {
                 startApp()
-                waitTenSeconds()
-                echo "Running acceptance tests"
+                sleep(10) //wait for application to start
                 gradlew('acceptanceTest')
 
                 publishHTML target: [
@@ -147,19 +146,9 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    echo "Starting App"
     sh "java -jar build/libs/motorbike-service-*.jar &"
-    echo "App Started"
 }
 
 def stopApp() {
-    echo "Stopping App"
     sh "curl -X POST localhost:8080/actuator/shutdown"
-    echo "App Stopped"
-}
-
-def waitTenSeconds(){
-    echo "waitTenSeconds start"
-    sleep(10)
-    echo "waitTenSeconds stop"
 }
