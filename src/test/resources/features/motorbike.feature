@@ -1,4 +1,4 @@
-Feature: Motorbike Endpoints
+Feature: Motorbike API
   Scenario: client makes call to GET /motorbikes with no motorbikes in the database
     Given no motorbikes exist in the database
     When the client calls GET '/motorbikes'
