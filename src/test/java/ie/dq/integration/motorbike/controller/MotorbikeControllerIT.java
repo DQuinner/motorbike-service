@@ -1,12 +1,16 @@
 package ie.dq.integration.motorbike.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ie.dq.motorbike.MotorbikeApp;
 import ie.dq.motorbike.controller.MotorbikeController;
+import ie.dq.motorbike.repository.MotorbikeRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,29 +25,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
-//@SpringBootTest(classes = MotorbikeApp.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@WebMvcTest(MotorbikeController.class)
-//@AutoConfigureMockMvc
+@SpringBootTest(classes = MotorbikeApp.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMvc
 @ActiveProfiles("INTEGRATION_TEST")
 public class MotorbikeControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
 
-//    @Autowired
-//    private MotorbikeRepository motorbikeRepository;
+    @Autowired
+    private MotorbikeRepository motorbikeRepository;
 
     private ObjectMapper objectMapper;
 
     @Before
     public void setup() {
         this.objectMapper = new ObjectMapper();
-        //motorbikeRepository.deleteAll();
+        motorbikeRepository.deleteAll();
     }
 
     @Test
     public void testGetMotorbikes() throws Exception {
-        //createMotorbike();
+        createMotorbike();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/motorbikes").accept(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
@@ -93,7 +96,7 @@ public class MotorbikeControllerIT {
 
     @Test
     public void testCreateMotorbikeConflict() throws Exception {
-        //createMotorbike();
+        createMotorbike();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/motorbikes")
                 .content(objectMapper.writeValueAsString(MotorbikeTestData.newMotorbike()))
@@ -117,8 +120,8 @@ public class MotorbikeControllerIT {
                 .andReturn();
     }
 
-//    private void createMotorbike(){
-//        motorbikeRepository.save(MotorbikeTestData.newMotorbike());
-//    }
+    private void createMotorbike(){
+        motorbikeRepository.save(MotorbikeTestData.newMotorbike());
+    }
 
 }
