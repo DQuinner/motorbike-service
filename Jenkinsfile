@@ -99,7 +99,7 @@ pipeline {
         stage('Acceptance Test') {
             steps {
                 startApp()
-
+                sleep 10s
                 gradlew('acceptanceTest')
 
                 publishHTML target: [
@@ -147,7 +147,6 @@ def gradlew(String... args) {
 
 def startApp() {
     sh "java -jar build/libs/motorbike-service-*.jar &"
-    sleep 10s
     return
 }
 
