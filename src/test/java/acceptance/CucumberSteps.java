@@ -1,6 +1,5 @@
 package acceptance;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -14,22 +13,20 @@ import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
-public class CucumberSteps extends CucumberRoot {
+public class CucumberSteps extends AcceptanceTest {
 
     private ResponseEntity responseEntity;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     @Given("no motorbikes exist in the database")
     public void no_motorbikes_exist_in_the_database() throws Throwable {
-        responseEntity = restTemplate.getForEntity("/motorbikes", String.class);
+        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
         assertNull(responseEntity.getBody());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
     @Given("motorbike exists in the database of {string} {string}")
     public void motorbike_exists_in_the_database_of(String make, String model) throws Throwable {
-        responseEntity = restTemplate.getForEntity("/motorbikes", String.class);
+        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
         assertNotNull(responseEntity.getBody());
         JSONObject jsonMotorbike = getJSONMotorbikeResponseBody(make, model);
         assertEquals(make, jsonMotorbike.getString("make"));
@@ -38,7 +35,7 @@ public class CucumberSteps extends CucumberRoot {
 
     @When("the client calls GET {string}")
     public void the_client_issues_GET_url(String url) throws Throwable {
-        responseEntity = restTemplate.getForEntity(url, String.class);
+        responseEntity = restTemplate.getForEntity("http://localhost:8080"+url, String.class);
         assertNotNull(responseEntity);
     }
 
@@ -46,7 +43,7 @@ public class CucumberSteps extends CucumberRoot {
     public void the_client_calls_POST_motorbike_of(String make, String model, String type) throws Throwable {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        responseEntity = restTemplate.postForEntity("/motorbikes", new HttpEntity<>(motorbike(make,model,type), headers), String.class);
+        responseEntity = restTemplate.postForEntity("http://localhost:8080/motorbikes", new HttpEntity<>(motorbike(make,model,type), headers), String.class);
         assertNotNull(responseEntity);
     }
 

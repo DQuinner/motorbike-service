@@ -98,6 +98,8 @@ pipeline {
         }
         stage('Acceptance Test') {
             steps {
+                startApp()
+
                 gradlew('acceptanceTest')
 
                 publishHTML target: [
@@ -120,6 +122,7 @@ pipeline {
             post {
                 always {
                     junit 'build/test-results/acceptanceTest/**/*.xml'
+                    stopApp()
                 }
             }
         }
@@ -140,4 +143,12 @@ pipeline {
 
 def gradlew(String... args) {
     sh "./gradlew ${args.join(' ')} -s"
+}
+
+def startApp() {
+    sh "java -jar build/libs/motorbike-service-*.jar -s"
+}
+
+def stopApp() {
+    sh "curl -X POST localhost:8080/actuator/shutdown"
 }
