@@ -99,7 +99,7 @@ pipeline {
         stage('Acceptance Test') {
             steps {
                 startApp()
-                sleep 10s
+                sleep()
                 gradlew('acceptanceTest')
 
                 publishHTML target: [
@@ -147,10 +147,12 @@ def gradlew(String... args) {
 
 def startApp() {
     sh "java -jar build/libs/motorbike-service-*.jar &"
-    return
 }
 
 def stopApp() {
     sh "curl -X POST localhost:8080/actuator/shutdown"
-    return
+}
+
+def sleep(){
+    sleep 10s
 }
