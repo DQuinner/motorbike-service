@@ -22,19 +22,19 @@ jar {
 
 test {
     filter{
-        includeTestsMatching "unit.ie.dq.motorbike.*"
+        includeTestsMatching "ie.dq.unit.motorbike.*"
     }
 }
 
 task integrationTest(type: Test) {
     filter{
-        includeTestsMatching "integration.*"
+        includeTestsMatching "ie.dq.integration.motorbike.*"
     }
 }
 
 task acceptanceTest(type: Test) {
     filter{
-        includeTestsMatching "acceptance.*"
+        includeTestsMatching "ie.dq.acceptance.motorbike.*"
     }
 }
 

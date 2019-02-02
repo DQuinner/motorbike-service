@@ -1,51 +1,49 @@
-package unit.ie.dq.motorbike.controller;
+package ie.dq.integration.motorbike.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ie.dq.motorbike.controller.MotorbikeController;
-import ie.dq.motorbike.domain.Motorbike;
-import ie.dq.motorbike.service.MotorbikeService;
-import util.MotorbikeTestData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ie.dq.util.MotorbikeTestData;
 
-import java.util.LinkedList;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = MotorbikeApp.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@WebMvcTest(MotorbikeController.class)
+//@AutoConfigureMockMvc
+@ActiveProfiles("INTEGRATION_TEST")
+public class MotorbikeControllerIT {
 
-@RunWith(MockitoJUnitRunner.class)
-public class MotorbikeControllerTest {
-
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private MotorbikeService motorbikeService;
-
-    @InjectMocks
-    private MotorbikeController motorbikeController;
+//    @Autowired
+//    private MotorbikeRepository motorbikeRepository;
 
     private ObjectMapper objectMapper;
 
     @Before
     public void setup() {
         this.objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(motorbikeController).build();
+        //motorbikeRepository.deleteAll();
     }
 
     @Test
     public void testGetMotorbikes() throws Exception {
-        when(motorbikeService.getMotorbikes()).thenReturn(MotorbikeTestData.motorbikePage());
+        //createMotorbike();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/motorbikes").accept(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
@@ -53,30 +51,30 @@ public class MotorbikeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().string(objectMapper.writeValueAsString(MotorbikeTestData.motorbikePage())))
+                //.andExpect(content().string(objectMapper.writeValueAsString(MotorbikeTestData.motorbikePage())))
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.totalElements", is(1)))
+                .andExpect(jsonPath("$.totalPages", is(1)))
+                .andExpect(jsonPath("$.last", is(true)))
+                .andExpect(jsonPath("$.number", is(0)))
+                //.andExpect(jsonPath("$.sort", is(nullValue())))
+                .andExpect(jsonPath("$.first", is(true)))
+                .andExpect(jsonPath("$.numberOfElements", is(1)))
                 .andReturn();
-
-        verify(motorbikeService).getMotorbikes();
     }
 
     @Test
     public void testGetMotorbikesNoContent() throws Exception {
-        when(motorbikeService.getMotorbikes()).thenReturn(new PageImpl<Motorbike>(new LinkedList()));
-
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/motorbikes").accept(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isNoContent())
                 .andExpect(content().string(""))
                 .andReturn();
-
-        verify(motorbikeService).getMotorbikes();
     }
 
     @Test
     public void testCreateMotorbike() throws Exception {
-        when(motorbikeService.createMotorbike(MotorbikeTestData.newMotorbike())).thenReturn(MotorbikeTestData.createdMotorbike());
-
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/motorbikes")
                 .content(objectMapper.writeValueAsString(MotorbikeTestData.newMotorbike()))
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -86,15 +84,16 @@ public class MotorbikeControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(content().string(objectMapper.writeValueAsString(MotorbikeTestData.createdMotorbike())))
+                //.andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.make", is(MotorbikeTestData.newMotorbike().getMake())))
+                .andExpect(jsonPath("$.model", is(MotorbikeTestData.newMotorbike().getModel())))
+                .andExpect(jsonPath("$.type", is(MotorbikeTestData.newMotorbike().getType())))
                 .andReturn();
-
-        verify(motorbikeService).createMotorbike(MotorbikeTestData.newMotorbike());
     }
 
     @Test
     public void testCreateMotorbikeConflict() throws Exception {
-        when(motorbikeService.createMotorbike(MotorbikeTestData.newMotorbike())).thenReturn(new Motorbike());
+        //createMotorbike();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/motorbikes")
                 .content(objectMapper.writeValueAsString(MotorbikeTestData.newMotorbike()))
@@ -104,8 +103,6 @@ public class MotorbikeControllerTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isConflict())
                 .andReturn();
-
-        verify(motorbikeService).createMotorbike(MotorbikeTestData.newMotorbike());
     }
 
     @Test
@@ -118,8 +115,10 @@ public class MotorbikeControllerTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
                 .andReturn();
-
-        verify(motorbikeService, never()).createMotorbike(MotorbikeTestData.newMotorbike());
     }
+
+//    private void createMotorbike(){
+//        motorbikeRepository.save(MotorbikeTestData.newMotorbike());
+//    }
 
 }

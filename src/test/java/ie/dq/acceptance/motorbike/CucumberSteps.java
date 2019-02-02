@@ -1,4 +1,4 @@
-package acceptance;
+package ie.dq.acceptance.motorbike;
 
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;

@@ -1,10 +1,9 @@
-package unit.ie.dq.motorbike.service.impl;
+package ie.dq.unit.motorbike.service.impl;
 
 import ie.dq.motorbike.domain.Motorbike;
 import ie.dq.motorbike.repository.MotorbikeRepository;
 import ie.dq.motorbike.service.impl.MotorbikeServiceImpl;
-import org.junit.experimental.categories.Category;
-import util.MotorbikeTestData;
+import ie.dq.util.MotorbikeTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

@@ -1,4 +1,4 @@
-package acceptance;
+package ie.dq.acceptance.motorbike;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Bean;

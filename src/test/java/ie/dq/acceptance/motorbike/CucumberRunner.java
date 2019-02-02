@@ -1,4 +1,4 @@
-package acceptance;
+package ie.dq.acceptance.motorbike;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
