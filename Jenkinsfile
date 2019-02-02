@@ -99,7 +99,7 @@ pipeline {
         stage('Acceptance Test') {
             steps {
                 startApp()
-                sleep()
+                waitTenSeconds()
                 gradlew('acceptanceTest')
 
                 publishHTML target: [
@@ -153,6 +153,6 @@ def stopApp() {
     sh "curl -X POST localhost:8080/actuator/shutdown"
 }
 
-def sleep(){
+def waitTenSeconds(){
     sleep 10s
 }
