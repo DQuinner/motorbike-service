@@ -147,8 +147,10 @@ def gradlew(String... args) {
 
 def startApp() {
     sh "java -jar build/libs/motorbike-service-*.jar -s"
+    return
 }
 
 def stopApp() {
     sh "curl -X POST localhost:8080/actuator/shutdown"
+    return
 }
