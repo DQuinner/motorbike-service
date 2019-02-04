@@ -100,7 +100,7 @@ pipeline {
             steps {
                 startApp()
                 sleep(10) //wait for application to start
-                gradlew('acceptanceTest')
+                gradlew('acceptanceTest aggregate')
 
                 publishHTML target: [
                         allowMissing: false,
