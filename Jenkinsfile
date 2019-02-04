@@ -114,9 +114,9 @@ pipeline {
                         allowMissing: false,
                         alwaysLinkToLastBuild: false,
                         keepAll: true,
-                        reportDir: 'build/cucumber/',
+                        reportDir: 'target/site/serenity/',
                         reportFiles: 'index.html',
-                        reportName: 'Cucumber Report'
+                        reportName: 'Serenity Report'
                 ]
             }
             post {

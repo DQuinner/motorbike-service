@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath("net.serenity-bdd:serenity-gradle-plugin:2.0.38")
+    }
+}
+
 plugins {
     id "java"
     id "jacoco"
@@ -6,6 +15,7 @@ plugins {
 }
 
 apply plugin: 'maven'
+apply plugin: "net.serenity-bdd.aggregator"
 
 group 'ie.dq'
 version '1.0-SNAPSHOT'
@@ -69,7 +79,9 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.1.2.RELEASE'
     compile group: 'com.h2database', name: 'h2', version: '1.4.197'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.2.RELEASE'
-    testCompile group: 'io.cucumber', name: 'cucumber-java', version: '4.2.2'
-    testCompile group: 'io.cucumber', name: 'cucumber-junit', version: '4.2.2'
-    testCompile group: 'io.cucumber', name: 'cucumber-spring', version: '4.2.2'
+    testCompile group: 'net.serenity-bdd', name: 'serenity-core', version: '2.0.38'
+    testCompile group: 'net.serenity-bdd', name: 'serenity-cucumber', version: '1.9.29'
+    testCompile group: 'net.serenity-bdd', name: 'serenity-spring', version: '2.0.38'
 }
+
+gradle.startParameter.continueOnFailure = true

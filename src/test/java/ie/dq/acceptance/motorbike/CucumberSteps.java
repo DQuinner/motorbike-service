@@ -17,14 +17,14 @@ public class CucumberSteps extends AcceptanceTest {
 
     private ResponseEntity responseEntity;
 
-    @Given("no motorbikes exist in the database")
+    @Given("^no motorbikes exist in the database$")
     public void no_motorbikes_exist_in_the_database() throws Throwable {
         responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
         assertNull(responseEntity.getBody());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
-    @Given("motorbike exists in the database of {string} {string}")
+    @Given("^motorbike exists in the database of (.+) (.+)$")
     public void motorbike_exists_in_the_database_of(String make, String model) throws Throwable {
         responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
         assertNotNull(responseEntity.getBody());
@@ -33,13 +33,13 @@ public class CucumberSteps extends AcceptanceTest {
         assertEquals(model, jsonMotorbike.getString("model"));
     }
 
-    @When("the client calls GET {string}")
+    @When("^the client calls GET (.+)$")
     public void the_client_issues_GET_url(String url) throws Throwable {
         responseEntity = restTemplate.getForEntity("http://localhost:8080"+url, String.class);
         assertNotNull(responseEntity);
     }
 
-    @When("the client calls POST /motorbikes with motorbike of {string} {string} {string}")
+    @When("^the client calls POST /motorbikes with motorbike of (.+) (.+) (.+)$")
     public void the_client_calls_POST_motorbike_of(String make, String model, String type) throws Throwable {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -47,24 +47,24 @@ public class CucumberSteps extends AcceptanceTest {
         assertNotNull(responseEntity);
     }
 
-    @Then("the client receives response status code of {int}")
+    @Then("^the client receives response status code of (.+)$")
     public void the_client_receives_status_code_of(int statusCode) throws Throwable {
         HttpStatus currentStatusCode = responseEntity.getStatusCode();
         assertThat("status code is incorrect : " +responseEntity.getBody(), currentStatusCode.value(), is(statusCode));
     }
 
-    @Then("the health status is UP")
+    @Then("^the health status is UP$")
     public void the_health_status_is_up() throws Throwable {
         assertNotNull(responseEntity.getBody());
         assertTrue(String.valueOf(responseEntity.getBody()).contains("\"status\" : \"UP\""));
     }
 
-    @Then("the response body is empty")
+    @Then("^the response body is empty$")
     public void the_response_body_is_empty() throws Throwable {
         assertNull(responseEntity.getBody());
     }
 
-    @Then("the response body contains created motorbike of {string} {string} {string}")
+    @Then("^the response body contains created motorbike of (.+) (.+) (.+)$")
     public void the_response_body_contains_created_motorbike_of(String make, String model, String type) throws Throwable {
         assertNotNull(responseEntity.getBody());
         JSONObject createdMotorbike = new JSONObject(String.valueOf(responseEntity.getBody()));
@@ -74,7 +74,7 @@ public class CucumberSteps extends AcceptanceTest {
         assertEquals(type, createdMotorbike.getString("type"));
     }
 
-    @Then("the response body contains array with created motorbike of {string} {string} {string}")
+    @Then("^the response body contains array with created motorbike of (.+) (.+) (.+)$")
     public void the_response_body_contains_array_with_created_motorbike_of(String make, String model, String type) throws Throwable {
         assertNotNull(responseEntity.getBody());
         JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model);
