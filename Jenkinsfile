@@ -53,14 +53,6 @@ pipeline {
                                 reportFiles: 'index.html',
                                 reportName: 'Integration Test Report'
                         ]
-                        publishHTML target: [
-                                allowMissing: false,
-                                alwaysLinkToLastBuild: false,
-                                keepAll: true,
-                                reportDir: 'build/cucumber/',
-                                reportFiles: 'index.html',
-                                reportName: 'Cucumber Report'
-                        ]
                     }
                     post {
                         always {
@@ -70,9 +62,9 @@ pipeline {
                 }
             }
         }
-        stage('Code Analysis') {
+        stage('Quality Gate') {
             parallel {
-                stage('Sonar'){
+                stage('Sonar Analysis'){
                     environment {
                         SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
                     }
@@ -80,7 +72,7 @@ pipeline {
                         gradlew('sonarqube')
                     }
                 }
-                stage('Coverage'){
+                stage('Code Coverage'){
                     steps {
                         gradlew('jacocoTestCoverageVerification')
                     }
@@ -106,7 +98,40 @@ pipeline {
         }
         stage('Acceptance Test') {
             steps {
-                sleep 1 //2DO feature/acceptance-test
+                startApp()
+                sleep(10) //wait for application to start
+                gradlew('acceptanceTest aggregate')
+
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/reports/tests/acceptanceTest/',
+                        reportFiles: 'index.html',
+                        reportName: 'Acceptance Test Report'
+                ]
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/cucumber/',
+                        reportFiles: 'index.html',
+                        reportName: 'Cucumber Report'
+                ]
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'target/site/serenity/',
+                        reportFiles: 'index.html',
+                        reportName: 'Serenity Report'
+                ]
+            }
+            post {
+                always {
+                    junit 'build/test-results/acceptanceTest/**/*.xml'
+                    stopApp()
+                }
             }
         }
         stage('Promote') {
@@ -126,4 +151,12 @@ pipeline {
 
 def gradlew(String... args) {
     sh "./gradlew ${args.join(' ')} -s"
+}
+
+def startApp() {
+    sh "java -jar build/libs/motorbike-service-*.jar &"
+}
+
+def stopApp() {
+    sh "curl -X POST localhost:8080/actuator/shutdown"
 }
