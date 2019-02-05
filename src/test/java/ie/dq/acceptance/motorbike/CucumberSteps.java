@@ -24,7 +24,7 @@ public class CucumberSteps extends AcceptanceTest {
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
-    @Given("^motorbike exists in the database of (.+) (.+)$")
+    @Given("^motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\"$")
     public void motorbike_exists_in_the_database_of(String make, String model) throws Throwable {
         responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
         assertNotNull(responseEntity.getBody());
@@ -33,7 +33,7 @@ public class CucumberSteps extends AcceptanceTest {
         assertEquals(model, jsonMotorbike.getString("model"));
     }
 
-    @Given("^no motorbike exists in the database of (.+) (.+)$")
+    @Given("^no motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\"$")
     public void no_motorbike_exists_in_the_database_of(String make, String model) throws Throwable {
         responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
         if(responseEntity.getBody()!=null){
@@ -50,7 +50,7 @@ public class CucumberSteps extends AcceptanceTest {
         assertNotNull(responseEntity);
     }
 
-    @When("^the client calls POST /motorbikes with motorbike of (.+) (.+) (.+)$")
+    @When("^the client calls POST /motorbikes with motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
     public void the_client_calls_POST_motorbike_of(String make, String model, String type) throws Throwable {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -75,7 +75,7 @@ public class CucumberSteps extends AcceptanceTest {
         assertNull(responseEntity.getBody());
     }
 
-    @Then("^the response body contains created motorbike of (.+) (.+) (.+)$")
+    @Then("^the response body contains created motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
     public void the_response_body_contains_created_motorbike_of(String make, String model, String type) throws Throwable {
         assertNotNull(responseEntity.getBody());
         JSONObject createdMotorbike = new JSONObject(String.valueOf(responseEntity.getBody()));
@@ -85,7 +85,7 @@ public class CucumberSteps extends AcceptanceTest {
         assertEquals(type, createdMotorbike.getString("type"));
     }
 
-    @Then("^the response body contains array with created motorbike of (.+) (.+) (.+)$")
+    @Then("^the response body contains array with created motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
     public void the_response_body_contains_array_with_created_motorbike_of(String make, String model, String type) throws Throwable {
         assertNotNull(responseEntity.getBody());
         JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model);
