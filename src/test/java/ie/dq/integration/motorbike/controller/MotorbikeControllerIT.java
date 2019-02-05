@@ -2,14 +2,12 @@ package ie.dq.integration.motorbike.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ie.dq.motorbike.MotorbikeApp;
-import ie.dq.motorbike.controller.MotorbikeController;
 import ie.dq.motorbike.repository.MotorbikeRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,6 +19,7 @@ import ie.dq.util.MotorbikeTestData;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -51,18 +50,23 @@ public class MotorbikeControllerIT {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/motorbikes").accept(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         mockMvc.perform(requestBuilder)
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                //.andExpect(content().string(objectMapper.writeValueAsString(MotorbikeTestData.motorbikePage())))
                 .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].make", is(MotorbikeTestData.newMotorbike().getMake())))
+                .andExpect(jsonPath("$.content[0].model", is(MotorbikeTestData.newMotorbike().getModel())))
+                .andExpect(jsonPath("$.content[0].type", is(MotorbikeTestData.newMotorbike().getType())))
                 .andExpect(jsonPath("$.totalElements", is(1)))
                 .andExpect(jsonPath("$.totalPages", is(1)))
                 .andExpect(jsonPath("$.last", is(true)))
                 .andExpect(jsonPath("$.number", is(0)))
-                //.andExpect(jsonPath("$.sort", is(nullValue())))
                 .andExpect(jsonPath("$.first", is(true)))
                 .andExpect(jsonPath("$.numberOfElements", is(1)))
+                .andExpect(jsonPath("$.sort.empty", is(false)))
+                .andExpect(jsonPath("$.sort.sorted", is(true)))
+                .andExpect(jsonPath("$.sort.unsorted", is(false)))
                 .andReturn();
     }
 
@@ -71,6 +75,7 @@ public class MotorbikeControllerIT {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/motorbikes").accept(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         mockMvc.perform(requestBuilder)
+                .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(content().string(""))
                 .andReturn();
@@ -84,10 +89,10 @@ public class MotorbikeControllerIT {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         mockMvc.perform(requestBuilder)
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                //.andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.make", is(MotorbikeTestData.newMotorbike().getMake())))
                 .andExpect(jsonPath("$.model", is(MotorbikeTestData.newMotorbike().getModel())))
                 .andExpect(jsonPath("$.type", is(MotorbikeTestData.newMotorbike().getType())))
@@ -104,6 +109,7 @@ public class MotorbikeControllerIT {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         mockMvc.perform(requestBuilder)
+                .andDo(print())
                 .andExpect(status().isConflict())
                 .andReturn();
     }
@@ -116,6 +122,7 @@ public class MotorbikeControllerIT {
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE);
 
         mockMvc.perform(requestBuilder)
+                .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn();
     }
