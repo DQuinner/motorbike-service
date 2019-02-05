@@ -12,9 +12,9 @@ pipeline {
                 gradlew('clean', 'classes')
             }
         }
-        stage('Test') {
+        stage('Analyse and Test') {
             parallel {
-                stage('Unit') {
+                stage('Unit Test') {
                     steps {
                         gradlew('test', 'jacocoTestReport')
 
@@ -41,7 +41,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Integration') {
+                stage('Integration Test') {
                     steps {
                         gradlew('integrationTest')
 
@@ -60,11 +60,7 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-        stage('Code Analysis') {
-            parallel {
-                stage('Sonar'){
+                stage('Sonar Analysis'){
                     environment {
                         SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
                     }
@@ -72,9 +68,22 @@ pipeline {
                         gradlew('sonarqube')
                     }
                 }
-                stage('Coverage'){
+            }
+        }
+        stage('Quality Gate') {
+            parallel {
+                stage('Code Coverage'){
                     steps {
                         gradlew('jacocoTestCoverageVerification')
+                    }
+                }
+                stage('Sonar'){
+                    environment {
+                        SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
+                    }
+                    steps {
+                        sleep(1) //2DO check sonar results
+                        //gradlew('sonarqube')
                     }
                 }
             }
