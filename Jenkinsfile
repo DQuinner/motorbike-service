@@ -12,9 +12,9 @@ pipeline {
                 gradlew('clean', 'classes')
             }
         }
-        stage('Analyse and Test') {
+        stage('Test') {
             parallel {
-                stage('Unit Test') {
+                stage('Unit') {
                     steps {
                         gradlew('test', 'jacocoTestReport')
 
@@ -41,7 +41,7 @@ pipeline {
                         }
                     }
                 }
-                stage('Integration Test') {
+                stage('Integration') {
                     steps {
                         gradlew('integrationTest')
 
@@ -60,6 +60,10 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+        stage('Quality Gate') {
+            parallel {
                 stage('Sonar Analysis'){
                     environment {
                         SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
@@ -68,22 +72,9 @@ pipeline {
                         gradlew('sonarqube')
                     }
                 }
-            }
-        }
-        stage('Quality Gate') {
-            parallel {
                 stage('Code Coverage'){
                     steps {
                         gradlew('jacocoTestCoverageVerification')
-                    }
-                }
-                stage('Sonar'){
-                    environment {
-                        SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
-                    }
-                    steps {
-                        sleep(1) //2DO check sonar results
-                        //gradlew('sonarqube')
                     }
                 }
             }
@@ -111,6 +102,14 @@ pipeline {
                 sleep(10) //wait for application to start
                 gradlew('acceptanceTest aggregate')
 
+                publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/reports/tests/acceptanceTest/',
+                        reportFiles: 'index.html',
+                        reportName: 'Acceptance Test Report'
+                ]
                 publishHTML target: [
                         allowMissing: false,
                         alwaysLinkToLastBuild: false,
