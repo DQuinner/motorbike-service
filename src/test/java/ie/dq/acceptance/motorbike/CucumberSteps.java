@@ -33,6 +33,17 @@ public class CucumberSteps extends AcceptanceTest {
         assertEquals(model, jsonMotorbike.getString("model"));
     }
 
+    @Given("^no motorbike exists in the database of (.+) (.+)$")
+    public void no_motorbike_exists_in_the_database_of(String make, String model) throws Throwable {
+        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
+        if(responseEntity.getBody()!=null){
+            JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model);
+            assertEquals(0, createdMotorbike.length());
+        }else {
+            assertNull(responseEntity.getBody());
+        }
+    }
+
     @When("^the client calls GET (.+)$")
     public void the_client_issues_GET_url(String url) throws Throwable {
         responseEntity = restTemplate.getForEntity("http://localhost:8080"+url, String.class);

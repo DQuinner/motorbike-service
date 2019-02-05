@@ -106,9 +106,9 @@ pipeline {
                         allowMissing: false,
                         alwaysLinkToLastBuild: false,
                         keepAll: true,
-                        reportDir: 'build/reports/tests/acceptanceTest/',
+                        reportDir: 'build/cucumber/',
                         reportFiles: 'index.html',
-                        reportName: 'Acceptance Test Report'
+                        reportName: 'Cucumber Report'
                 ]
                 publishHTML target: [
                         allowMissing: false,
