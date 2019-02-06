@@ -22,11 +22,11 @@ public class MotorbikeServiceImpl implements MotorbikeService {
     @Override
     public Motorbike createMotorbike(Motorbike motorbike) {
         logger.info("createMotorbike {} {}", motorbike.getMake(), motorbike.getModel());
-        if(motorbikeRepository.existsMotorbikeByMakeAndModel(motorbike.getMake(), motorbike.getModel())){
-            logger.info("Motorbike {} {} already exists", motorbike.getMake(), motorbike.getModel());
+        if(motorbikeRepository.existsMotorbikeByMakeAndModelAndEngine(motorbike.getMake(), motorbike.getModel(), motorbike.getEngine())){
+            logger.info("Motorbike {} {} {} already exists", motorbike.getMake(), motorbike.getModel(), motorbike.getEngine());
             return new Motorbike();
         }else{
-            logger.info("Saving motorbike {} {}", motorbike.getMake(), motorbike.getModel());
+            logger.info("Saving motorbike {} {} {}", motorbike.getMake(), motorbike.getModel(), motorbike.getEngine());
             return motorbikeRepository.save(motorbike);
         }
     }

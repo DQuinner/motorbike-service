@@ -14,6 +14,7 @@ public class MotorbikeTestData {
         motorbike.setMake("Test Make");
         motorbike.setModel("Test Model");
         motorbike.setType("Test Type");
+        motorbike.setEngine(600);
         return motorbike;
     }
 

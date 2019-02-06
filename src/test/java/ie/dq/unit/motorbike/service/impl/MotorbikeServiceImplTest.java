@@ -29,7 +29,7 @@ public class MotorbikeServiceImplTest {
         Motorbike motorbike = MotorbikeTestData.newMotorbike();
 
         when(motorbikeRepository.save(motorbike)).thenReturn(MotorbikeTestData.createdMotorbike());
-        when(motorbikeRepository.existsMotorbikeByMakeAndModel(motorbike.getMake(), motorbike.getModel())).thenReturn(false);
+        when(motorbikeRepository.existsMotorbikeByMakeAndModelAndEngine(motorbike.getMake(), motorbike.getModel(), motorbike.getEngine())).thenReturn(false);
 
         Motorbike created = motorbikeService.createMotorbike(motorbike);
         assertNotNull(created);
@@ -37,8 +37,9 @@ public class MotorbikeServiceImplTest {
         assertEquals(motorbike.getMake(), created.getMake());
         assertEquals(motorbike.getModel(), created.getModel());
         assertEquals(motorbike.getType(), created.getType());
+        assertEquals(motorbike.getEngine(), created.getEngine());
 
-        verify(motorbikeRepository).existsMotorbikeByMakeAndModel(motorbike.getMake(), motorbike.getModel());
+        verify(motorbikeRepository).existsMotorbikeByMakeAndModelAndEngine(motorbike.getMake(), motorbike.getModel(), motorbike.getEngine());
         verify(motorbikeRepository).save(motorbike);
     }
 
@@ -46,7 +47,7 @@ public class MotorbikeServiceImplTest {
     public void testCreateMotorbikeExisting(){
         Motorbike motorbike = MotorbikeTestData.newMotorbike();
 
-        when(motorbikeRepository.existsMotorbikeByMakeAndModel(motorbike.getMake(), motorbike.getModel())).thenReturn(true);
+        when(motorbikeRepository.existsMotorbikeByMakeAndModelAndEngine(motorbike.getMake(), motorbike.getModel(), motorbike.getEngine())).thenReturn(true);
 
         Motorbike created = motorbikeService.createMotorbike(motorbike);
         assertNotNull(created);
@@ -54,8 +55,9 @@ public class MotorbikeServiceImplTest {
         assertNull(created.getMake());
         assertNull(created.getModel());
         assertNull(created.getType());
+        assertEquals(0, created.getEngine());
 
-        verify(motorbikeRepository).existsMotorbikeByMakeAndModel(motorbike.getMake(), motorbike.getModel());
+        verify(motorbikeRepository).existsMotorbikeByMakeAndModelAndEngine(motorbike.getMake(), motorbike.getModel(), motorbike.getEngine());
         verify(motorbikeRepository, never()).save(motorbike);
     }
 

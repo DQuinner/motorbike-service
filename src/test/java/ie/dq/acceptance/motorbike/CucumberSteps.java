@@ -7,13 +7,22 @@ import ie.dq.motorbike.domain.Motorbike;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
-public class CucumberSteps extends AcceptanceTest {
+@ActiveProfiles("ACCEPTANCE_TEST")
+@ContextConfiguration(classes = AcceptanceTestConfig.class)
+public class CucumberSteps {
+
+    @Autowired
+    protected TestRestTemplate restTemplate;
 
     private ResponseEntity responseEntity;
 
@@ -24,20 +33,21 @@ public class CucumberSteps extends AcceptanceTest {
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
-    @Given("^motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\"$")
-    public void motorbike_exists_in_the_database_of(String make, String model) throws Throwable {
+    @Given("^motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
+    public void motorbike_exists_in_the_database_of(String make, String model, int engine) throws Throwable {
         responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
         assertNotNull(responseEntity.getBody());
-        JSONObject jsonMotorbike = getJSONMotorbikeResponseBody(make, model);
+        JSONObject jsonMotorbike = getJSONMotorbikeResponseBody(make, model, engine);
         assertEquals(make, jsonMotorbike.getString("make"));
         assertEquals(model, jsonMotorbike.getString("model"));
+        assertEquals(engine, jsonMotorbike.getInt("engine"));
     }
 
-    @Given("^no motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\"$")
-    public void no_motorbike_exists_in_the_database_of(String make, String model) throws Throwable {
+    @Given("^no motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
+    public void no_motorbike_exists_in_the_database_of(String make, String model, int engine) throws Throwable {
         responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
         if(responseEntity.getBody()!=null){
-            JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model);
+            JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model, engine);
             assertEquals(0, createdMotorbike.length());
         }else {
             assertNull(responseEntity.getBody());
@@ -50,11 +60,11 @@ public class CucumberSteps extends AcceptanceTest {
         assertNotNull(responseEntity);
     }
 
-    @When("^the client calls POST /motorbikes with motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
-    public void the_client_calls_POST_motorbike_of(String make, String model, String type) throws Throwable {
+    @When("^the client calls POST /motorbikes with motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
+    public void the_client_calls_POST_motorbike_of(String make, String model, String type, int engine) throws Throwable {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        responseEntity = restTemplate.postForEntity("http://localhost:8080/motorbikes", new HttpEntity<>(motorbike(make,model,type), headers), String.class);
+        responseEntity = restTemplate.postForEntity("http://localhost:8080/motorbikes", new HttpEntity<>(motorbike(make,model,type,engine), headers), String.class);
         assertNotNull(responseEntity);
     }
 
@@ -75,42 +85,46 @@ public class CucumberSteps extends AcceptanceTest {
         assertNull(responseEntity.getBody());
     }
 
-    @Then("^the response body contains created motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
-    public void the_response_body_contains_created_motorbike_of(String make, String model, String type) throws Throwable {
+    @Then("^the response body contains created motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
+    public void the_response_body_contains_created_motorbike_of(String make, String model, String type, int engine) throws Throwable {
         assertNotNull(responseEntity.getBody());
         JSONObject createdMotorbike = new JSONObject(String.valueOf(responseEntity.getBody()));
         assertTrue(0l<createdMotorbike.getLong("id"));
         assertEquals(make, createdMotorbike.getString("make"));
         assertEquals(model, createdMotorbike.getString("model"));
         assertEquals(type, createdMotorbike.getString("type"));
+        assertEquals(engine, createdMotorbike.getInt("engine"));
     }
 
-    @Then("^the response body contains array with created motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
-    public void the_response_body_contains_array_with_created_motorbike_of(String make, String model, String type) throws Throwable {
+    @Then("^the response body contains array with created motorbike of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
+    public void the_response_body_contains_array_with_created_motorbike_of(String make, String model, String type, int engine) throws Throwable {
         assertNotNull(responseEntity.getBody());
-        JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model);
+        JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model, engine);
         assertTrue(0l<createdMotorbike.getLong("id"));
         assertEquals(make, createdMotorbike.getString("make"));
         assertEquals(model, createdMotorbike.getString("model"));
         assertEquals(type, createdMotorbike.getString("type"));
+        assertEquals(engine, createdMotorbike.getInt("engine"));
     }
 
-    private JSONObject getJSONMotorbikeResponseBody(String make, String model) throws JSONException {
+    private JSONObject getJSONMotorbikeResponseBody(String make, String model, int engine) throws JSONException {
         JSONArray jsonMotorbikes = new JSONObject(String.valueOf(responseEntity.getBody())).getJSONArray("content");
         for(int i = 0; i<jsonMotorbikes.length(); i++){
             JSONObject jsonMotorbike = jsonMotorbikes.getJSONObject(i);
-            if(make.equalsIgnoreCase(jsonMotorbike.getString("make")) && model.equalsIgnoreCase(jsonMotorbike.getString("model"))){
+            if(make.equalsIgnoreCase(jsonMotorbike.getString("make"))
+                    && model.equalsIgnoreCase(jsonMotorbike.getString("model")) && engine==jsonMotorbike.getInt("engine")){
                 return jsonMotorbike;
             }
         }
         return new JSONObject();
     }
 
-    private Motorbike motorbike(String make, String model, String type){
+    private Motorbike motorbike(String make, String model, String type, int engine){
         Motorbike motorbike = new Motorbike();
         motorbike.setMake(make);
         motorbike.setModel(model);
         motorbike.setType(type);
+        motorbike.setEngine(engine);
         return motorbike;
     }
 }
