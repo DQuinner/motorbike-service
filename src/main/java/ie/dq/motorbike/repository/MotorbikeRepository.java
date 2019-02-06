@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MotorbikeRepository extends PagingAndSortingRepository<Motorbike, Long> {
 
-    boolean existsMotorbikeByMakeAndModel(String make, String model);
+    boolean existsMotorbikeByMakeAndModelAndEngine(String make, String model, int engine);
 
 }

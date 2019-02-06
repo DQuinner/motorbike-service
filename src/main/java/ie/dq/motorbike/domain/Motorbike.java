@@ -19,6 +19,8 @@ public class Motorbike {
 
     private String type;
 
+    private int engine;
+
     public long getId() {
         return id;
     }
@@ -51,12 +53,20 @@ public class Motorbike {
         this.type = type;
     }
 
+    public int getEngine() {
+        return engine;
+    }
+
+    public void setEngine(int engine) {
+        this.engine = engine;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Motorbike motorbike = (Motorbike) o;
-        return id == motorbike.id &&
+        return engine == motorbike.engine &&
                 make.equals(motorbike.make) &&
                 model.equals(motorbike.model) &&
                 type.equals(motorbike.type);
@@ -64,6 +74,6 @@ public class Motorbike {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, make, model, type);
+        return Objects.hash(make, model, type, engine);
     }
 }

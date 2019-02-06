@@ -58,6 +58,7 @@ public class MotorbikeControllerIT {
                 .andExpect(jsonPath("$.content[0].make", is(MotorbikeTestData.newMotorbike().getMake())))
                 .andExpect(jsonPath("$.content[0].model", is(MotorbikeTestData.newMotorbike().getModel())))
                 .andExpect(jsonPath("$.content[0].type", is(MotorbikeTestData.newMotorbike().getType())))
+                .andExpect(jsonPath("$.content[0].engine", is(MotorbikeTestData.newMotorbike().getEngine())))
                 .andExpect(jsonPath("$.totalElements", is(1)))
                 .andExpect(jsonPath("$.totalPages", is(1)))
                 .andExpect(jsonPath("$.last", is(true)))
@@ -96,6 +97,7 @@ public class MotorbikeControllerIT {
                 .andExpect(jsonPath("$.make", is(MotorbikeTestData.newMotorbike().getMake())))
                 .andExpect(jsonPath("$.model", is(MotorbikeTestData.newMotorbike().getModel())))
                 .andExpect(jsonPath("$.type", is(MotorbikeTestData.newMotorbike().getType())))
+                .andExpect(jsonPath("$.engine", is(MotorbikeTestData.newMotorbike().getEngine())))
                 .andReturn();
     }
 
