@@ -81,8 +81,9 @@ pipeline {
         }
         stage('Build Artifact') {
             steps {
-                gradlew('assemble docker')
+                gradlew('assemble')
                 stash includes: '**/build/libs/*.jar', name: 'app'
+                gradlew('docker')
             }
             post {
                 always {
