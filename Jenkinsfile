@@ -1,7 +1,4 @@
 pipeline {
-
-    def dockerHost = '192.168.99.100'
-
     agent any
 
     stages {
@@ -161,5 +158,5 @@ def startApp() {
 }
 
 def stopApp() {
-    sh "curl -X POST dockerHost:8080/actuator/shutdown"
+    sh "curl -X POST 192.168.99.100:8080/actuator/shutdown"
 }
