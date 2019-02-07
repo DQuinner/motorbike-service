@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath("net.serenity-bdd:serenity-gradle-plugin:2.0.38")
+        classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0")
     }
 }
 
@@ -16,6 +17,7 @@ plugins {
 
 apply plugin: 'maven'
 apply plugin: "net.serenity-bdd.aggregator"
+apply plugin: 'com.palantir.docker'
 
 group 'ie.dq'
 version '1.0-SNAPSHOT'
@@ -30,6 +32,7 @@ jar {
     baseName = 'motorbike-service'
 }
 
+//Test tasks
 test {
     filter{
         includeTestsMatching "ie.dq.unit.motorbike.*"
@@ -46,6 +49,18 @@ task acceptanceTest(type: Test) {
     filter{
         includeTestsMatching "ie.dq.acceptance.motorbike.*"
     }
+}
+
+//Docker tasks
+task unpack(type: Copy) {
+    dependsOn bootJar
+    from(zipTree(tasks.bootJar.outputs.files.singleFile))
+    into("build/dependency")
+}
+docker {
+    name "${project.group}/${bootJar.baseName}"
+    copySpec.from(tasks.unpack.outputs).into("dependency")
+    buildArgs(['DEPENDENCY': "dependency"])
 }
 
 sonarqube {

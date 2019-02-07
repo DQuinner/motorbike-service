@@ -1,4 +1,7 @@
 pipeline {
+
+    def dockerHost = '192.168.99.100'
+
     agent any
 
     stages {
@@ -79,9 +82,9 @@ pipeline {
                 }
             }
         }
-        stage('Assemble') {
+        stage('Build Artifact') {
             steps {
-                gradlew('assemble')
+                gradlew('assemble docker')
                 stash includes: '**/build/libs/*.jar', name: 'app'
             }
             post {
@@ -154,9 +157,9 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    sh "java -jar build/libs/motorbike-service-*.jar &"
+    sh "docker run -p 8080:8080 -t ie.dq/motorbike-service"
 }
 
 def stopApp() {
-    sh "curl -X POST localhost:8080/actuator/shutdown"
+    sh "curl -X POST dockerHost:8080/actuator/shutdown"
 }

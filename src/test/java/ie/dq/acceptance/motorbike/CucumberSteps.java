@@ -28,14 +28,14 @@ public class CucumberSteps {
 
     @Given("^no motorbikes exist in the database$")
     public void no_motorbikes_exist_in_the_database() throws Throwable {
-        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
+        responseEntity = restTemplate.getForEntity("http://192.168.99.100:8080/motorbikes", String.class);
         assertNull(responseEntity.getBody());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
     @Given("^motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
     public void motorbike_exists_in_the_database_of(String make, String model, int engine) throws Throwable {
-        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
+        responseEntity = restTemplate.getForEntity("http://192.168.99.100:8080/motorbikes", String.class);
         assertNotNull(responseEntity.getBody());
         JSONObject jsonMotorbike = getJSONMotorbikeResponseBody(make, model, engine);
         assertEquals(make, jsonMotorbike.getString("make"));
@@ -45,7 +45,7 @@ public class CucumberSteps {
 
     @Given("^no motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
     public void no_motorbike_exists_in_the_database_of(String make, String model, int engine) throws Throwable {
-        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
+        responseEntity = restTemplate.getForEntity("http://192.168.99.100:8080/motorbikes", String.class);
         if(responseEntity.getBody()!=null){
             JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model, engine);
             assertEquals(0, createdMotorbike.length());
@@ -56,7 +56,7 @@ public class CucumberSteps {
 
     @When("^the client calls GET (.+)$")
     public void the_client_issues_GET_url(String url) throws Throwable {
-        responseEntity = restTemplate.getForEntity("http://localhost:8080"+url, String.class);
+        responseEntity = restTemplate.getForEntity("http://192.168.99.100:8080"+url, String.class);
         assertNotNull(responseEntity);
     }
 
@@ -64,7 +64,7 @@ public class CucumberSteps {
     public void the_client_calls_POST_motorbike_of(String make, String model, String type, int engine) throws Throwable {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        responseEntity = restTemplate.postForEntity("http://localhost:8080/motorbikes", new HttpEntity<>(motorbike(make,model,type,engine), headers), String.class);
+        responseEntity = restTemplate.postForEntity("http://192.168.99.100:8080/motorbikes", new HttpEntity<>(motorbike(make,model,type,engine), headers), String.class);
         assertNotNull(responseEntity);
     }
 
