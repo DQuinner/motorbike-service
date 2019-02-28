@@ -100,11 +100,8 @@ pipeline {
         stage('Acceptance Test') {
             steps {
                 startApp()
-                echo "Started App sleeping"
-                sleep(10) //wait for application to start
-                echo "Finished sleep"
+                sleep(15) //wait for application to start
                 gradlew('acceptanceTest aggregate')
-                echo "Finished tests"
 
                 publishHTML target: [
                         allowMissing: false,
