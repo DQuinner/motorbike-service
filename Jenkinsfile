@@ -94,11 +94,11 @@ pipeline {
         stage('Publish') {
             steps {
                 gradlew('install')
-                stash includes: '**/build/libs/*.jar', name: 'app'
+                gradlew('dockerPush')
             }
         }
         stage('Acceptance Test') {
-            steps {
+            steps
                 startApp()
                 sleep(30) //wait for application to start
                 gradlew('acceptanceTest aggregate')
@@ -148,14 +148,13 @@ pipeline {
             }
         }
     }
-}
 
 def gradlew(String... args) {
     sh "./gradlew ${args.join(' ')} -s"
 }
 
 def startApp() {
-    sh "docker run -p 8080:8080 -t ie.dq/motorbike-service &"
+    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:1.0.1-SNAPSHOT &" //2DO remove hardcode
 }
 
 def stopApp() {

@@ -20,7 +20,7 @@ apply plugin: "net.serenity-bdd.aggregator"
 apply plugin: 'com.palantir.docker'
 
 group 'ie.dq'
-version '1.0-SNAPSHOT'
+version '1.0.1-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
@@ -58,7 +58,8 @@ task unpack(type: Copy) {
     into("build/dependency")
 }
 docker {
-    name "${project.group}/${bootJar.baseName}"
+    name "dquinner/${bootJar.baseName}:${project.version}"
+    tags "latest"
     copySpec.from(tasks.unpack.outputs).into("dependency")
     buildArgs(['DEPENDENCY': "dependency"])
 }
