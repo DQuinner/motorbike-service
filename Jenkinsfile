@@ -1,14 +1,10 @@
 pipeline {
     agent any
 
-    def scmVars = null
-
     stages {
         stage('Checkout') {
             steps {
-                //checkout scm
-                scmVars = checkout scm
-                echo scmVars
+                checkout scm
             }
         }
         stage('Compile') {
@@ -158,7 +154,7 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:1.0.1-SNAPSHOT &" //2DO remove hardcode
+    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:"+env.BRANCH_NAME.replace('feature/','')+" &" //2DO remove hardcode
 }
 
 def stopApp() {

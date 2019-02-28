@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
+        jcenter()
     }
     dependencies {
         classpath("net.serenity-bdd:serenity-gradle-plugin:2.0.38")
@@ -26,6 +27,7 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 jar {
@@ -58,7 +60,7 @@ task unpack(type: Copy) {
     into("build/dependency")
 }
 docker {
-    name "dquinner/${bootJar.baseName}:${project.version}"
+    name "dquinner/${bootJar.baseName}:${project.version}-"+gitBranch()
     tags "latest"
     copySpec.from(tasks.unpack.outputs).into("dependency")
     buildArgs(['DEPENDENCY': "dependency"])
@@ -101,3 +103,16 @@ dependencies {
 }
 
 gradle.startParameter.continueOnFailure = true
+
+def testString(){
+    return "test"
+}
+
+def gitBranch() {
+    def branch = ""
+    def proc = "git rev-parse --abbrev-ref HEAD".execute()
+    proc.in.eachLine { line -> branch = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    branch.replace('feature/','')
+}
