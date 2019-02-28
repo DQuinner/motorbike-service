@@ -158,7 +158,7 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    sh "nohup docker run -p 8080:8080 -t ie.dq/motorbike-service"
+    sh "docker run -p 8080:8080 -t ie.dq/motorbike-service &"
 }
 
 def stopApp() {
