@@ -6,6 +6,7 @@ buildscript {
     dependencies {
         classpath("net.serenity-bdd:serenity-gradle-plugin:2.0.38")
         classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0")
+        classpath("org.ajoberstar:grgit:2.2.1")
     }
 }
 
@@ -19,6 +20,7 @@ plugins {
 apply plugin: 'maven'
 apply plugin: "net.serenity-bdd.aggregator"
 apply plugin: 'com.palantir.docker'
+apply plugin: "org.ajoberstar.grgit"
 
 group 'ie.dq'
 version '1.0.1-SNAPSHOT'
@@ -60,7 +62,7 @@ task unpack(type: Copy) {
     into("build/dependency")
 }
 docker {
-    name "dquinner/${bootJar.baseName}:${project.version}-"+gitBranch()
+    name "dquinner/${bootJar.baseName}:${project.version}-"+getWorkingBranch()
     tags "latest"
     copySpec.from(tasks.unpack.outputs).into("dependency")
     buildArgs(['DEPENDENCY': "dependency"])
@@ -115,4 +117,9 @@ def gitBranch() {
     proc.err.eachLine { line -> println line }
     proc.waitFor()
     branch.replace('feature/','')
+}
+
+def getWorkingBranch(){
+    ext.repo = grgit.open()
+    return ext.repo.branch.current.name
 }
