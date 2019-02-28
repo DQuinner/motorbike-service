@@ -4,8 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                //checkout scm
-                sh git checkout ${env.BRANCH_NAME}
+                checkout scm
             }
         }
         stage('Compile') {
