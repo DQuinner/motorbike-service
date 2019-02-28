@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-    def scmVars
+    def scmVars = null
 
     stages {
         stage('Checkout') {
