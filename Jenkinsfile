@@ -19,20 +19,20 @@ pipeline {
                         gradlew('test', 'jacocoTestReport')
 
                         publishHTML target: [
-                                allowMissing: false,
+                                allowMissing         : false,
                                 alwaysLinkToLastBuild: false,
-                                keepAll: true,
-                                reportDir: 'build/reports/tests/test/',
-                                reportFiles: 'index.html',
-                                reportName: 'Unit Test Report'
+                                keepAll              : true,
+                                reportDir            : 'build/reports/tests/test/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Unit Test Report'
                         ]
                         publishHTML target: [
-                                allowMissing: false,
+                                allowMissing         : false,
                                 alwaysLinkToLastBuild: false,
-                                keepAll: true,
-                                reportDir: 'build/reports/jacoco/test/html/',
-                                reportFiles: 'index.html',
-                                reportName: 'Code Coverage Report'
+                                keepAll              : true,
+                                reportDir            : 'build/reports/jacoco/test/html/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Code Coverage Report'
                         ]
                     }
                     post {
@@ -46,12 +46,12 @@ pipeline {
                         gradlew('integrationTest')
 
                         publishHTML target: [
-                                allowMissing: false,
+                                allowMissing         : false,
                                 alwaysLinkToLastBuild: false,
-                                keepAll: true,
-                                reportDir: 'build/reports/tests/integrationTest/',
-                                reportFiles: 'index.html',
-                                reportName: 'Integration Test Report'
+                                keepAll              : true,
+                                reportDir            : 'build/reports/tests/integrationTest/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Integration Test Report'
                         ]
                     }
                     post {
@@ -64,7 +64,7 @@ pipeline {
         }
         stage('Quality Gate') {
             parallel {
-                stage('Sonar Analysis'){
+                stage('Sonar Analysis') {
                     environment {
                         SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
                     }
@@ -72,7 +72,7 @@ pipeline {
                         gradlew('sonarqube')
                     }
                 }
-                stage('Code Coverage'){
+                stage('Code Coverage') {
                     steps {
                         gradlew('jacocoTestCoverageVerification')
                     }
@@ -98,34 +98,34 @@ pipeline {
             }
         }
         stage('Acceptance Test') {
-            steps
+            steps {
                 startApp()
                 sleep(30) //wait for application to start
                 gradlew('acceptanceTest aggregate')
 
                 publishHTML target: [
-                        allowMissing: false,
+                        allowMissing         : false,
                         alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'build/reports/tests/acceptanceTest/',
-                        reportFiles: 'index.html',
-                        reportName: 'Acceptance Test Report'
+                        keepAll              : true,
+                        reportDir            : 'build/reports/tests/acceptanceTest/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Acceptance Test Report'
                 ]
                 publishHTML target: [
-                        allowMissing: false,
+                        allowMissing         : false,
                         alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'build/cucumber/',
-                        reportFiles: 'index.html',
-                        reportName: 'Cucumber Report'
+                        keepAll              : true,
+                        reportDir            : 'build/cucumber/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Cucumber Report'
                 ]
                 publishHTML target: [
-                        allowMissing: false,
+                        allowMissing         : false,
                         alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'target/site/serenity/',
-                        reportFiles: 'index.html',
-                        reportName: 'Serenity Report'
+                        keepAll              : true,
+                        reportDir            : 'target/site/serenity/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Serenity Report'
                 ]
             }
             post {
@@ -137,7 +137,7 @@ pipeline {
         }
         stage('Promote') {
             steps {
-                timeout(time: 1, unit:'DAYS') {
+                timeout(time: 1, unit: 'DAYS') {
                     input 'Deploy?'
                 }
             }
@@ -148,7 +148,7 @@ pipeline {
             }
         }
     }
-
+}
 def gradlew(String... args) {
     sh "./gradlew ${args.join(' ')} -s"
 }
