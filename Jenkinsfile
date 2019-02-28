@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                //checkout scm
+                git checkout ${env.BRANCH_NAME}
             }
         }
         stage('Compile') {
@@ -154,7 +155,7 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:"+env.BRANCH_NAME.replace('feature/','')+" &" //2DO remove hardcode
+    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:"+env.BRANCH_NAME.replace('feature/','')+" &"
 }
 
 def stopApp() {
