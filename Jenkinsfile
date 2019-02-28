@@ -4,12 +4,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                //checkout scm
-                checkout([
-                        $class: 'GitSCM',
-                        branches: scm.branches,
-                        extensions: scm.extensions + [[$class: 'LocalBranch'], [$class: 'WipeWorkspace']],
-                ])
+                checkout scm
+//                checkout([
+//                        $class: 'GitSCM',
+//                        branches: scm.branches,
+//                        extensions: scm.extensions + [[$class: 'LocalBranch'], [$class: 'WipeWorkspace']],
+//                ])
             }
         }
         stage('Compile') {
