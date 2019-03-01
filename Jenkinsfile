@@ -169,7 +169,7 @@ def stopApp() {
 }
 
 def getCurrentTag(){
-    def branch = env.BRANCH_NAME.replace('feature/','')
+    def branch = env.BRANCH_NAME
     if(branch.contains('feature/')){
         return '-'+branch.replace('feature/','')
     }else if (branch.equals('master')){
