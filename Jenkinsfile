@@ -162,6 +162,5 @@ def startApp() {
 }
 
 def stopApp() {
-    echo stash
     sh "curl -X POST 192.168.99.100:8080/actuator/shutdown"
 }
