@@ -160,10 +160,21 @@ def gradlew(String... args) {
 def startApp() {
     def appProps = readProperties  file:'src/main/resources/application.properties'
     def testProps = readProperties  file:'src/test/resources/application-test.properties'
-    sh "docker run -p "+testProps['acceptance.test.port']+":"+testProps['acceptance.test.port']+" -t dquinner/motorbike-service:"+appProps['info.app.version']+"-"+env.BRANCH_NAME.replace('feature/','')+" &"
+    sh "docker run -p "+testProps['acceptance.test.port']+":"+testProps['acceptance.test.port']+" -t dquinner/motorbike-service:"+appProps['info.app.version']+getCurrentTag()+" &"
 }
 
 def stopApp() {
     def testProps = readProperties  file:'src/test/resources/application-test.properties'
     sh "curl -X POST "+testProps['acceptance.test.host']+":"+testProps['acceptance.test.port']+"/actuator/shutdown"
+}
+
+def getCurrentTag(){
+    def branch = env.BRANCH_NAME
+    if(branch.contains('feature/')){
+        return '-'+branch.replace('feature/','')
+    }else if (branch.equals('master')){
+        return '-latest'
+    }else {
+        return ''
+    }
 }
