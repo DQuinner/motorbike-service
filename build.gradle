@@ -62,8 +62,7 @@ task unpack(type: Copy) {
     into("build/dependency")
 }
 docker {
-    name "dquinner/${bootJar.baseName}:${project.version}-"+getWorkingBranch()
-    tags "latest"
+    name "dquinner/${bootJar.baseName}:${project.version}-"+getCurrentTag()
     copySpec.from(tasks.unpack.outputs).into("dependency")
     buildArgs(['DEPENDENCY': "dependency"])
 }
@@ -106,20 +105,18 @@ dependencies {
 
 gradle.startParameter.continueOnFailure = true
 
-def testString(){
-    return "test"
+def getCurrentTag(){
+    def branch = getGitBranch()
+    if(branch.contains('feature/')){
+        return '-'+branch.replace('feature/','')
+    }else if (branch.equals('master')){
+        return 'latest'
+    }else {
+        return ''
+    }
 }
 
-def gitBranch() {
-    def branch = ""
-    def proc = "git rev-parse --abbrev-ref HEAD".execute()
-    proc.in.eachLine { line -> branch = line }
-    proc.err.eachLine { line -> println line }
-    proc.waitFor()
-    branch.replace('feature/','')
-}
-
-def getWorkingBranch(){
+def getGitBranch(){
     ext.repo = grgit.open()
     return ext.repo.branch.current.name
 }
