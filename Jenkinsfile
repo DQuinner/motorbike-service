@@ -8,7 +8,8 @@ pipeline {
                 checkout([
                         $class: 'GitSCM',
                         branches: scm.branches,
-                        extensions: scm.extensions + [[$class: 'LocalBranch'], [$class: 'WipeWorkspace']]
+                        //extensions: scm.extensions + [[$class: 'LocalBranch'], [$class: 'WipeWorkspace']]
+                        extensions: scm.extensions + [[$class: 'LocalBranch']]
                 ])
             }
         }
