@@ -160,7 +160,8 @@ def gradlew(String... args) {
 def startApp() {
     def props = readProperties  file:'src/main/resources/application.properties'
     echo 'props='+props
-    def appVersion = props.info.app.version
+    def appVersion = props['info.app.version']
+    echo 'appVersion='+appVersion
     sh "docker run -p 8080:8080 -t dquinner/motorbike-service:"+appVersion+"-"+env.BRANCH_NAME.replace('feature/','')+" &"
 }
 
