@@ -4,11 +4,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                //checkout scm (detached HEAD)
                 checkout([
                         $class: 'GitSCM',
                         branches: scm.branches,
-                        //extensions: scm.extensions + [[$class: 'LocalBranch'], [$class: 'WipeWorkspace']]
                         extensions: scm.extensions + [[$class: 'LocalBranch']]
                 ])
             }
@@ -85,7 +83,7 @@ pipeline {
                 }
             }
         }
-        stage('Build Artifact') {
+        stage('Build') {
             steps {
                 gradlew('assemble')
                 stash includes: '**/build/libs/*.jar', name: 'app'
@@ -160,9 +158,10 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:"+env.BRANCH_NAME.replace('feature/','')+" &"
+    sh "docker run -p 8080:8080 -t dquinner/motorbike-service-1.0.1-SNAPSHOT:"+env.BRANCH_NAME.replace('feature/','')+" &"
 }
 
 def stopApp() {
+    echo stash
     sh "curl -X POST 192.168.99.100:8080/actuator/shutdown"
 }
