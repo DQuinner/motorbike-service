@@ -8,10 +8,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.Matchers.is;
@@ -19,23 +21,30 @@ import static org.junit.Assert.*;
 
 @ActiveProfiles("ACCEPTANCE_TEST")
 @ContextConfiguration(classes = AcceptanceTestConfig.class)
+@TestPropertySource(locations="classpath:application-test.properties")
 public class CucumberSteps {
 
     @Autowired
     protected TestRestTemplate restTemplate;
 
+    @Value("${acceptance.test.host}")
+    private String testHost;
+
+    @Value("${acceptance.test.port}")
+    private String testPort;
+
     private ResponseEntity responseEntity;
 
     @Given("^no motorbikes exist in the database$")
     public void no_motorbikes_exist_in_the_database() throws Throwable {
-        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
+        responseEntity = restTemplate.getForEntity(testEndpoint()+"/motorbikes", String.class);
         assertNull(responseEntity.getBody());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
     @Given("^motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
     public void motorbike_exists_in_the_database_of(String make, String model, int engine) throws Throwable {
-        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
+        responseEntity = restTemplate.getForEntity(testEndpoint()+"/motorbikes", String.class);
         assertNotNull(responseEntity.getBody());
         JSONObject jsonMotorbike = getJSONMotorbikeResponseBody(make, model, engine);
         assertEquals(make, jsonMotorbike.getString("make"));
@@ -45,7 +54,7 @@ public class CucumberSteps {
 
     @Given("^no motorbike exists in the database of \"([^\"]+)\" \"([^\"]+)\" \"([^\"]+)\"$")
     public void no_motorbike_exists_in_the_database_of(String make, String model, int engine) throws Throwable {
-        responseEntity = restTemplate.getForEntity("http://localhost:8080/motorbikes", String.class);
+        responseEntity = restTemplate.getForEntity(testEndpoint()+"/motorbikes", String.class);
         if(responseEntity.getBody()!=null){
             JSONObject createdMotorbike = getJSONMotorbikeResponseBody(make, model, engine);
             assertEquals(0, createdMotorbike.length());
@@ -56,7 +65,7 @@ public class CucumberSteps {
 
     @When("^the client calls GET (.+)$")
     public void the_client_issues_GET_url(String url) throws Throwable {
-        responseEntity = restTemplate.getForEntity("http://localhost:8080"+url, String.class);
+        responseEntity = restTemplate.getForEntity(testEndpoint()+url, String.class);
         assertNotNull(responseEntity);
     }
 
@@ -64,7 +73,7 @@ public class CucumberSteps {
     public void the_client_calls_POST_motorbike_of(String make, String model, String type, int engine) throws Throwable {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        responseEntity = restTemplate.postForEntity("http://localhost:8080/motorbikes", new HttpEntity<>(motorbike(make,model,type,engine), headers), String.class);
+        responseEntity = restTemplate.postForEntity(testEndpoint()+"/motorbikes", new HttpEntity<>(motorbike(make,model,type,engine), headers), String.class);
         assertNotNull(responseEntity);
     }
 
@@ -105,6 +114,10 @@ public class CucumberSteps {
         assertEquals(model, createdMotorbike.getString("model"));
         assertEquals(type, createdMotorbike.getString("type"));
         assertEquals(engine, createdMotorbike.getInt("engine"));
+    }
+
+    private String testEndpoint(){
+        return "http://"+testHost+":"+testPort;
     }
 
     private JSONObject getJSONMotorbikeResponseBody(String make, String model, int engine) throws JSONException {

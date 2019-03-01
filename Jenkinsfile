@@ -4,7 +4,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                checkout([
+                        $class: 'GitSCM',
+                        branches: scm.branches,
+                        extensions: scm.extensions + [[$class: 'LocalBranch']]
+                ])
             }
         }
         stage('Compile') {
@@ -19,20 +23,20 @@ pipeline {
                         gradlew('test', 'jacocoTestReport')
 
                         publishHTML target: [
-                                allowMissing: false,
+                                allowMissing         : false,
                                 alwaysLinkToLastBuild: false,
-                                keepAll: true,
-                                reportDir: 'build/reports/tests/test/',
-                                reportFiles: 'index.html',
-                                reportName: 'Unit Test Report'
+                                keepAll              : true,
+                                reportDir            : 'build/reports/tests/test/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Unit Test Report'
                         ]
                         publishHTML target: [
-                                allowMissing: false,
+                                allowMissing         : false,
                                 alwaysLinkToLastBuild: false,
-                                keepAll: true,
-                                reportDir: 'build/reports/jacoco/test/html/',
-                                reportFiles: 'index.html',
-                                reportName: 'Code Coverage Report'
+                                keepAll              : true,
+                                reportDir            : 'build/reports/jacoco/test/html/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Code Coverage Report'
                         ]
                     }
                     post {
@@ -46,12 +50,12 @@ pipeline {
                         gradlew('integrationTest')
 
                         publishHTML target: [
-                                allowMissing: false,
+                                allowMissing         : false,
                                 alwaysLinkToLastBuild: false,
-                                keepAll: true,
-                                reportDir: 'build/reports/tests/integrationTest/',
-                                reportFiles: 'index.html',
-                                reportName: 'Integration Test Report'
+                                keepAll              : true,
+                                reportDir            : 'build/reports/tests/integrationTest/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Integration Test Report'
                         ]
                     }
                     post {
@@ -64,7 +68,7 @@ pipeline {
         }
         stage('Quality Gate') {
             parallel {
-                stage('Sonar Analysis'){
+                stage('Sonar Analysis') {
                     environment {
                         SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
                     }
@@ -72,17 +76,18 @@ pipeline {
                         gradlew('sonarqube')
                     }
                 }
-                stage('Code Coverage'){
+                stage('Code Coverage') {
                     steps {
                         gradlew('jacocoTestCoverageVerification')
                     }
                 }
             }
         }
-        stage('Assemble') {
+        stage('Build') {
             steps {
                 gradlew('assemble')
                 stash includes: '**/build/libs/*.jar', name: 'app'
+                gradlew('docker')
             }
             post {
                 always {
@@ -93,38 +98,38 @@ pipeline {
         stage('Publish') {
             steps {
                 gradlew('install')
-                stash includes: '**/build/libs/*.jar', name: 'app'
+                gradlew('dockerPush')
             }
         }
         stage('Acceptance Test') {
             steps {
                 startApp()
-                sleep(10) //wait for application to start
+                sleep(30) //wait for application to start
                 gradlew('acceptanceTest aggregate')
 
                 publishHTML target: [
-                        allowMissing: false,
+                        allowMissing         : false,
                         alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'build/reports/tests/acceptanceTest/',
-                        reportFiles: 'index.html',
-                        reportName: 'Acceptance Test Report'
+                        keepAll              : true,
+                        reportDir            : 'build/reports/tests/acceptanceTest/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Acceptance Test Report'
                 ]
                 publishHTML target: [
-                        allowMissing: false,
+                        allowMissing         : false,
                         alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'build/cucumber/',
-                        reportFiles: 'index.html',
-                        reportName: 'Cucumber Report'
+                        keepAll              : true,
+                        reportDir            : 'build/cucumber/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Cucumber Report'
                 ]
                 publishHTML target: [
-                        allowMissing: false,
+                        allowMissing         : false,
                         alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: 'target/site/serenity/',
-                        reportFiles: 'index.html',
-                        reportName: 'Serenity Report'
+                        keepAll              : true,
+                        reportDir            : 'target/site/serenity/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Serenity Report'
                 ]
             }
             post {
@@ -136,7 +141,7 @@ pipeline {
         }
         stage('Promote') {
             steps {
-                timeout(time: 1, unit:'DAYS') {
+                timeout(time: 1, unit: 'DAYS') {
                     input 'Deploy?'
                 }
             }
@@ -148,15 +153,17 @@ pipeline {
         }
     }
 }
-
 def gradlew(String... args) {
     sh "./gradlew ${args.join(' ')} -s"
 }
 
 def startApp() {
-    sh "java -jar build/libs/motorbike-service-*.jar &"
+    def appProps = readProperties  file:'src/main/resources/application.properties'
+    def testProps = readProperties  file:'src/test/resources/application-test.properties'
+    sh "docker run -p "+testProps['acceptance.test.port']+":"+testProps['acceptance.test.port']+" -t dquinner/motorbike-service:"+appProps['info.app.version']+"-"+env.BRANCH_NAME.replace('feature/','')+" &"
 }
 
 def stopApp() {
-    sh "curl -X POST localhost:8080/actuator/shutdown"
+    def testProps = readProperties  file:'src/test/resources/application-test.properties'
+    sh "curl -X POST "+testProps['acceptance.test.host']+":"+testProps['acceptance.test.port']+"/actuator/shutdown"
 }

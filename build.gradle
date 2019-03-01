@@ -1,9 +1,12 @@
 buildscript {
     repositories {
         mavenLocal()
+        jcenter()
     }
     dependencies {
         classpath("net.serenity-bdd:serenity-gradle-plugin:2.0.38")
+        classpath("gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0")
+        classpath("org.ajoberstar:grgit:2.2.1")
     }
 }
 
@@ -16,20 +19,24 @@ plugins {
 
 apply plugin: 'maven'
 apply plugin: "net.serenity-bdd.aggregator"
+apply plugin: 'com.palantir.docker'
+apply plugin: "org.ajoberstar.grgit"
 
 group 'ie.dq'
-version '1.0-SNAPSHOT'
+version '1.0.1-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 jar {
     baseName = 'motorbike-service'
 }
 
+//Test tasks
 test {
     filter{
         includeTestsMatching "ie.dq.unit.motorbike.*"
@@ -46,6 +53,18 @@ task acceptanceTest(type: Test) {
     filter{
         includeTestsMatching "ie.dq.acceptance.motorbike.*"
     }
+}
+
+//Docker tasks
+task unpack(type: Copy) {
+    dependsOn bootJar
+    from(zipTree(tasks.bootJar.outputs.files.singleFile))
+    into("build/dependency")
+}
+docker {
+    name "dquinner/${bootJar.baseName}:${project.version}"+getCurrentTag()
+    copySpec.from(tasks.unpack.outputs).into("dependency")
+    buildArgs(['DEPENDENCY': "dependency"])
 }
 
 sonarqube {
@@ -85,3 +104,19 @@ dependencies {
 }
 
 gradle.startParameter.continueOnFailure = true
+
+def getCurrentTag(){
+    def branch = getGitBranch()
+    if(branch.contains('feature/')){
+        return '-'+branch.replace('feature/','')
+    }else if (branch.equals('master')){
+        return '-latest'
+    }else {
+        return ''
+    }
+}
+
+def getGitBranch(){
+    ext.repo = grgit.open()
+    return ext.repo.branch.current.name
+}
