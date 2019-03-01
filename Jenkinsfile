@@ -160,7 +160,7 @@ def gradlew(String... args) {
 def startApp() {
     def appProps = readProperties  file:'src/main/resources/application.properties'
     def testProps = readProperties  file:'src/test/resources/application-test.properties'
-    sh "docker run -p "+testProps['acceptance.test.port']+":"+testProps['acceptance.test.port']+" -t dquinner/motorbike-service:"+appProps['info.app.version']+"-"+getCurrentTag()+" &"
+    sh "docker run -p "+testProps['acceptance.test.port']+":"+testProps['acceptance.test.port']+" -t dquinner/motorbike-service:"+appProps['info.app.version']+getCurrentTag()+" &"
 }
 
 def stopApp() {
