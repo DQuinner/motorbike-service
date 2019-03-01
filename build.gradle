@@ -110,7 +110,7 @@ def getCurrentTag(){
     if(branch.contains('feature/')){
         return '-'+branch.replace('feature/','')
     }else if (branch.equals('master')){
-        return 'latest'
+        return '-latest'
     }else {
         return ''
     }
