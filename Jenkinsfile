@@ -148,7 +148,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sleep 1 //2DO feature/cloud-foundry
+                sh "eb create jenkins-test -s"
             }
         }
     }
