@@ -158,9 +158,11 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:1.0.1-SNAPSHOT-"+env.BRANCH_NAME.replace('feature/','')+" &"
+    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:"+props.info.app.version+"-"+env.BRANCH_NAME.replace('feature/','')+" &"
 }
 
 def stopApp() {
     sh "curl -X POST 192.168.99.100:8080/actuator/shutdown"
 }
+
+def props = readProperties  file:'/src/main/resources/application.properties'
