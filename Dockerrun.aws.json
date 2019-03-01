@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "dquinner/motorbike-service:1.0.1-SNAPSHOT-latest",
+    "Name": "dquinner/motorbike-service:1.0.1-SNAPSHOT-latest-",
     "Update": "true"
   },
   "Ports": [
