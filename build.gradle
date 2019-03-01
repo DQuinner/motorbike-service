@@ -62,7 +62,7 @@ task unpack(type: Copy) {
     into("build/dependency")
 }
 docker {
-    name "dquinner/${bootJar.baseName}:${project.version}-"+getCurrentTag()
+    name "dquinner/${bootJar.baseName}:${project.version}"+getCurrentTag()
     copySpec.from(tasks.unpack.outputs).into("dependency")
     buildArgs(['DEPENDENCY': "dependency"])
 }

@@ -158,7 +158,7 @@ def gradlew(String... args) {
 }
 
 def startApp() {
-    sh "docker run -p 8080:8080 -t dquinner/motorbike-service-1.0.1-SNAPSHOT:"+env.BRANCH_NAME.replace('feature/','')+" &"
+    sh "docker run -p 8080:8080 -t dquinner/motorbike-service:1.0.1-SNAPSHOT-"+env.BRANCH_NAME.replace('feature/','')+" &"
 }
 
 def stopApp() {
