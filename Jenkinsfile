@@ -188,7 +188,7 @@ def currentTag(){
 def createDockerRunFile(){
     def appProps = readProperties  file:'src/main/resources/application.properties'
     def dockerImage = "dquinner/motorbike-service:"+appProps['info.app.version']+currentTag()
-    def json = readJSON file: 'Dockerrun.aws.json'
+    def json = readJSON file: 'DockerRunTemplate.json'
     json.Image.name=dockerImage
     writeJSON file: 'Dockerrun.aws.json', json: json, pretty: 4
 }
