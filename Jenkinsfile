@@ -71,13 +71,13 @@ pipeline {
         stage('Quality Gate') {
             parallel {
                 stage('Sonar Analysis') {
-                    sleep(1)
-//                    environment {
-//                        SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
-//                    }
-//                    steps {
-//                        gradlew('sonarqube')
-//                    }
+                    environment {
+                        SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
+                    }
+                    steps {
+                        sleep(1)
+                        gradlew('sonarqube')
+                    }
                 }
                 stage('Code Coverage') {
                     steps {
