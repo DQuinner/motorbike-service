@@ -139,10 +139,10 @@ pipeline {
                 }
             }
         }
-        stage('Promote') {
+        stage('Deployment Gate') {
             steps {
                 timeout(time: 1, unit: 'DAYS') {
-                    input 'Deploy motorbike-service '+environmentName()+' to AWS Beanstalk?'
+                    input 'Deploy docker tag '+dockerImage()+' to AWS?'
                 }
             }
         }
@@ -181,10 +181,8 @@ def currentTag(){
 }
 
 def createDockerRunFile(){
-    def appProps = readProperties  file:'src/main/resources/application.properties'
-    def dockerImage = "dquinner/motorbike-service:"+appProps['info.app.version']+currentTag()
     def json = readJSON file: 'DockerRunTemplate.json'
-    json.Image.Name=dockerImage
+    json.Image.Name=dockerImage()
     writeJSON file: 'Dockerrun.aws.json', json: json, pretty: 4
 }
 
@@ -192,4 +190,9 @@ def environmentName(){
     def appProps = readProperties  file:'src/main/resources/application.properties'
     def appVersion = appProps['info.app.version']
     return appVersion.replace('.','')+currentTag()
+}
+
+def dockerImage(){
+    def appProps = readProperties  file:'src/main/resources/application.properties'
+    return "dquinner/motorbike-service:"+appProps['info.app.version']+currentTag()
 }
