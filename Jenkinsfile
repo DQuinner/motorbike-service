@@ -71,12 +71,13 @@ pipeline {
         stage('Quality Gate') {
             parallel {
                 stage('Sonar Analysis') {
-                    environment {
-                        SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
-                    }
-                    steps {
-                        gradlew('sonarqube')
-                    }
+                    sleep(1)
+//                    environment {
+//                        SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
+//                    }
+//                    steps {
+//                        gradlew('sonarqube')
+//                    }
                 }
                 stage('Code Coverage') {
                     steps {
@@ -188,7 +189,8 @@ def createDockerrunAwsFile(){
     def appProps = readProperties  file:'src/main/resources/application.properties'
     def dockerTag = "dquinner/motorbike-service:+"+appProps['info.app.version']+getCurrentTag()
     def input = readJSON file: 'template.dockerrun.aws.json'
-    echo 'input'+input
-    echo 'output='+input.replace('DOCKER_TAG',dockerTag)
-    writeJSON file: 'Dockerrun.aws.json', json: input.replace('DOCKER_TAG',dockerTag), pretty: 4
+    echo 'input.Image.name = '+input.Image.name
+    input.Image.name=dockerTag
+    echo 'input.Image.name = '+input.Image.name
+    writeJSON file: 'Dockerrun.aws.json', json: input, pretty: 4
 }
