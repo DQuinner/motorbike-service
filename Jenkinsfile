@@ -183,8 +183,9 @@ def getCurrentTag(){
 def createDockerrunAwsFile(){
     def appProps = readProperties  file:'src/main/resources/application.properties'
     def dockerTag = "dquinner/motorbike-service:+"+appProps['info.app.version']+getCurrentTag()
-    def input = readJSON file: 'Dockerrun.aws.json'
-    input.replace('DOCKER_TAG',dockerTag)
-    writeJSON file: 'Dockerrun.aws.json', json: input
-    writeJSON file: 'output.json', json: input, pretty: 4
+    def input = readJSON file: 'template.dockerrun.aws.json'
+    echo 'input'+input
+    def output = input.replace('DOCKER_TAG',dockerTag)
+    echo 'output='+output
+    writeJSON file: 'Dockerrun.aws.json', json: output, pretty: 4
 }
