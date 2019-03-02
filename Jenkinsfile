@@ -209,6 +209,6 @@ def createEnvironment(){
 }
 
 def getEnvironmentInfo(){
-    def environment = sh "aws elasticbeanstalk describe-environments --environment-names "+environmentName()+" -s"
+    def environment = sh "aws elasticbeanstalk describe-environments --environment-names "+environmentName()
     echo "response env = "+environment
 }
