@@ -148,7 +148,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh "eb create jenkins-test -s"
+                sh "eb create jenkins-test-fail -s"
             }
         }
     }
@@ -177,4 +177,14 @@ def getCurrentTag(){
     }else {
         return ''
     }
+}
+
+def createDockerrunAwsFile(){
+    def appProps = readProperties  file:'src/main/resources/application.properties'
+    def dockerTag = "dquinner/motorbike-service:+"+appProps['info.app.version']+getCurrentTag()
+    def input = readJSON file: 'Dockerrun.aws.json'
+    input.replace('DOCKER_TAG',dockerTag)
+    writeJSON file: 'Dockerrun.aws.json', json: input
+    // or pretty print it, indented with a configurable number of spaces
+    writeJSON file: 'output.json', json: input, pretty: 4
 }
