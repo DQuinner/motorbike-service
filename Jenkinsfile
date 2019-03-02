@@ -154,8 +154,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 createDockerRunFile()
-                def environment = sh "eb create "+environmentName()+" -s"
-                echo "response env = "+environment
+                createEnvironment()
             }
         }
     }
@@ -201,4 +200,9 @@ def environmentName(){
 def dockerImage(){
     def appProps = readProperties  file:'src/main/resources/application.properties'
     return "dquinner/motorbike-service:"+appProps['info.app.version']+currentTag()
+}
+
+def createEnvironment(){
+    def environment = sh "eb create "+environmentName()+" -s"
+    echo "response env = "+environment
 }
