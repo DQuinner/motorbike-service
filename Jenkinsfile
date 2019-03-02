@@ -211,6 +211,7 @@ def dockerImage(){
 }
 
 def createEnvironment(){
+    def resp
     sh "eb create "+environmentName()+" &>resp -s"
     echo 'resp = '+resp
 }
