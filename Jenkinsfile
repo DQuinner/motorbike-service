@@ -3,14 +3,14 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            sleep(1)
-//            steps {
+            steps {
+                sleep(1)
 //                checkout([
 //                        $class: 'GitSCM',
 //                        branches: scm.branches,
 //                        extensions: scm.extensions + [[$class: 'LocalBranch']]
 //                ])
-//            }
+            }
         }
         stage('Compile') {
             steps {
