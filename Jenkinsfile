@@ -47,22 +47,20 @@ pipeline {
                 }
                 stage('Integration') {
                     steps {
-                        sleep(1)
-//                        gradlew('integrationTest')
-//
-//                        publishHTML target: [
-//                                allowMissing         : false,
-//                                alwaysLinkToLastBuild: false,
-//                                keepAll              : true,
-//                                reportDir            : 'build/reports/tests/integrationTest/',
-//                                reportFiles          : 'index.html',
-//                                reportName           : 'Integration Test Report'
-//                        ]
+                        gradlew('integrationTest')
+
+                        publishHTML target: [
+                                allowMissing         : false,
+                                alwaysLinkToLastBuild: false,
+                                keepAll              : true,
+                                reportDir            : 'build/reports/tests/integrationTest/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Integration Test Report'
+                        ]
                     }
                     post {
                         always {
-                            //junit 'build/test-results/integrationTest/**/*.xml'
-                            sleep(1)
+                            junit 'build/test-results/integrationTest/**/*.xml'
                         }
                     }
                 }
@@ -75,8 +73,7 @@ pipeline {
                         SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
                     }
                     steps {
-                        sleep(1)
-                        //gradlew('sonarqube')
+                        gradlew('sonarqube')
                     }
                 }
                 stage('Code Coverage') {
@@ -106,48 +103,46 @@ pipeline {
         }
         stage('Acceptance Test') {
             steps {
-                sleep(1)
-//                startApp()
-//                sleep(30) //wait for application to start
-//                gradlew('acceptanceTest aggregate')
-//
-//                publishHTML target: [
-//                        allowMissing         : false,
-//                        alwaysLinkToLastBuild: false,
-//                        keepAll              : true,
-//                        reportDir            : 'build/reports/tests/acceptanceTest/',
-//                        reportFiles          : 'index.html',
-//                        reportName           : 'Acceptance Test Report'
-//                ]
-//                publishHTML target: [
-//                        allowMissing         : false,
-//                        alwaysLinkToLastBuild: false,
-//                        keepAll              : true,
-//                        reportDir            : 'build/cucumber/',
-//                        reportFiles          : 'index.html',
-//                        reportName           : 'Cucumber Report'
-//                ]
-//                publishHTML target: [
-//                        allowMissing         : false,
-//                        alwaysLinkToLastBuild: false,
-//                        keepAll              : true,
-//                        reportDir            : 'target/site/serenity/',
-//                        reportFiles          : 'index.html',
-//                        reportName           : 'Serenity Report'
-//                ]
+                startApp()
+                sleep(30) //wait for application to start
+                gradlew('acceptanceTest aggregate')
+
+                publishHTML target: [
+                        allowMissing         : false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll              : true,
+                        reportDir            : 'build/reports/tests/acceptanceTest/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Acceptance Test Report'
+                ]
+                publishHTML target: [
+                        allowMissing         : false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll              : true,
+                        reportDir            : 'build/cucumber/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Cucumber Report'
+                ]
+                publishHTML target: [
+                        allowMissing         : false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll              : true,
+                        reportDir            : 'target/site/serenity/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Serenity Report'
+                ]
             }
             post {
                 always {
-                    sleep(1)
-//                    junit 'build/test-results/acceptanceTest/**/*.xml'
-//                    stopApp()
+                    junit 'build/test-results/acceptanceTest/**/*.xml'
+                    stopApp()
                 }
             }
         }
         stage('Promote') {
             steps {
                 timeout(time: 1, unit: 'DAYS') {
-                    input 'Deploy?'
+                    input 'Deploy motorbike-service '+environmentName()+' to AWS Beanstalk?'
                 }
             }
         }
