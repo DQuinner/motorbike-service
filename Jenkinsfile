@@ -155,6 +155,7 @@ pipeline {
             steps {
                 createDockerRunFile()
                 createEnvironment()
+                getEnvironmentInfo()
             }
         }
     }
@@ -204,5 +205,10 @@ def dockerImage(){
 
 def createEnvironment(){
     def environment = sh "eb create "+environmentName()+" -s"
+    echo "response env = "+environment
+}
+
+def getEnvironmentInfo(){
+    def environment = sh "aws elasticbeanstalk describe-environments --environment-names "+environmentName()+" -s"
     echo "response env = "+environment
 }
