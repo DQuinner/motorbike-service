@@ -148,7 +148,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh "eb create jenkins-test-fail -s"
+                createDockerrunAwsFile()
+                sh "eb create jenkins-test-tag -s"
             }
         }
     }
@@ -185,6 +186,5 @@ def createDockerrunAwsFile(){
     def input = readJSON file: 'Dockerrun.aws.json'
     input.replace('DOCKER_TAG',dockerTag)
     writeJSON file: 'Dockerrun.aws.json', json: input
-    // or pretty print it, indented with a configurable number of spaces
     writeJSON file: 'output.json', json: input, pretty: 4
 }
