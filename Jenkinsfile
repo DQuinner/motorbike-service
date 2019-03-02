@@ -76,7 +76,7 @@ pipeline {
                     }
                     steps {
                         sleep(1)
-                        gradlew('sonarqube')
+                        //gradlew('sonarqube')
                     }
                 }
                 stage('Code Coverage') {
@@ -153,8 +153,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                createDockerrunAwsFile()
-                sh "eb create jenkins-test-tag -s"
+                createDockerRunFile()
+                sh "eb create "+environmentName()+" -s"
             }
         }
     }
@@ -166,7 +166,7 @@ def gradlew(String... args) {
 def startApp() {
     def appProps = readProperties  file:'src/main/resources/application.properties'
     def testProps = readProperties  file:'src/test/resources/application-test.properties'
-    sh "docker run -p "+testProps['acceptance.test.port']+":"+testProps['acceptance.test.port']+" -t dquinner/motorbike-service:"+appProps['info.app.version']+getCurrentTag()+" &"
+    sh "docker run -p "+testProps['acceptance.test.port']+":"+testProps['acceptance.test.port']+" -t dquinner/motorbike-service:"+appProps['info.app.version']+currentTag()+" &"
 }
 
 def stopApp() {
@@ -174,7 +174,7 @@ def stopApp() {
     sh "curl -X POST "+testProps['acceptance.test.host']+":"+testProps['acceptance.test.port']+"/actuator/shutdown"
 }
 
-def getCurrentTag(){
+def currentTag(){
     def branch = env.BRANCH_NAME
     if(branch.contains('feature/')){
         return '-'+branch.replace('feature/','')
@@ -185,12 +185,15 @@ def getCurrentTag(){
     }
 }
 
-def createDockerrunAwsFile(){
+def createDockerRunFile(){
     def appProps = readProperties  file:'src/main/resources/application.properties'
-    def dockerTag = "dquinner/motorbike-service:+"+appProps['info.app.version']+getCurrentTag()
-    def input = readJSON file: 'template.dockerrun.aws.json'
-    echo 'input.Image.name = '+input.Image.name
-    input.Image.name=dockerTag
-    echo 'input.Image.name = '+input.Image.name
-    writeJSON file: 'Dockerrun.aws.json', json: input, pretty: 4
+    def dockerImage = "dquinner/motorbike-service:"+appProps['info.app.version']+currentTag()
+    def json = readJSON file: 'Dockerrun.aws.json'
+    json.Image.name=dockerImage
+    writeJSON file: 'Dockerrun.aws.json', json: json, pretty: 4
+}
+
+def environmentName(){
+    def appProps = readProperties  file:'src/main/resources/application.properties'
+    return appProps['info.app.version']+currentTag()
 }
