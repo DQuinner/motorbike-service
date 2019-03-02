@@ -1,12 +1,12 @@
-branch-defaults:
-  feature/aws:
-    environment: motorbike-service-test
+#branch-defaults:
+#  feature/aws:
+#    environment: motorbike-service-test
 deploy:
   artifact: Dockerrun.aws.json
-environment-defaults:
-  motorbike-service-test:
-    branch: null
-    repository: null
+#environment-defaults:
+#  motorbike-service-test:
+#    branch: null
+#    repository: null
 global:
   application_name: motorbike-service
   default_ec2_keyname: null
