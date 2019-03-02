@@ -3,64 +3,70 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                checkout([
-                        $class: 'GitSCM',
-                        branches: scm.branches,
-                        extensions: scm.extensions + [[$class: 'LocalBranch']]
-                ])
-            }
+            sleep(1)
+//            steps {
+//                checkout([
+//                        $class: 'GitSCM',
+//                        branches: scm.branches,
+//                        extensions: scm.extensions + [[$class: 'LocalBranch']]
+//                ])
+//            }
         }
         stage('Compile') {
             steps {
-                gradlew('clean', 'classes')
+                sleep(1)
+                //gradlew('clean', 'classes')
             }
         }
         stage('Test') {
             parallel {
                 stage('Unit') {
                     steps {
-                        gradlew('test', 'jacocoTestReport')
-
-                        publishHTML target: [
-                                allowMissing         : false,
-                                alwaysLinkToLastBuild: false,
-                                keepAll              : true,
-                                reportDir            : 'build/reports/tests/test/',
-                                reportFiles          : 'index.html',
-                                reportName           : 'Unit Test Report'
-                        ]
-                        publishHTML target: [
-                                allowMissing         : false,
-                                alwaysLinkToLastBuild: false,
-                                keepAll              : true,
-                                reportDir            : 'build/reports/jacoco/test/html/',
-                                reportFiles          : 'index.html',
-                                reportName           : 'Code Coverage Report'
-                        ]
+                        sleep(1)
+//                        gradlew('test', 'jacocoTestReport')
+//
+//                        publishHTML target: [
+//                                allowMissing         : false,
+//                                alwaysLinkToLastBuild: false,
+//                                keepAll              : true,
+//                                reportDir            : 'build/reports/tests/test/',
+//                                reportFiles          : 'index.html',
+//                                reportName           : 'Unit Test Report'
+//                        ]
+//                        publishHTML target: [
+//                                allowMissing         : false,
+//                                alwaysLinkToLastBuild: false,
+//                                keepAll              : true,
+//                                reportDir            : 'build/reports/jacoco/test/html/',
+//                                reportFiles          : 'index.html',
+//                                reportName           : 'Code Coverage Report'
+//                        ]
                     }
                     post {
                         always {
-                            junit 'build/test-results/test/**/*.xml'
+                            sleep(1)
+                            //junit 'build/test-results/test/**/*.xml'
                         }
                     }
                 }
                 stage('Integration') {
                     steps {
-                        gradlew('integrationTest')
-
-                        publishHTML target: [
-                                allowMissing         : false,
-                                alwaysLinkToLastBuild: false,
-                                keepAll              : true,
-                                reportDir            : 'build/reports/tests/integrationTest/',
-                                reportFiles          : 'index.html',
-                                reportName           : 'Integration Test Report'
-                        ]
+                        sleep(1)
+//                        gradlew('integrationTest')
+//
+//                        publishHTML target: [
+//                                allowMissing         : false,
+//                                alwaysLinkToLastBuild: false,
+//                                keepAll              : true,
+//                                reportDir            : 'build/reports/tests/integrationTest/',
+//                                reportFiles          : 'index.html',
+//                                reportName           : 'Integration Test Report'
+//                        ]
                     }
                     post {
                         always {
-                            junit 'build/test-results/integrationTest/**/*.xml'
+                            sleep(1)
+                            //junit 'build/test-results/integrationTest/**/*.xml'
                         }
                     }
                 }
@@ -73,69 +79,76 @@ pipeline {
                         SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
                     }
                     steps {
-                        gradlew('sonarqube')
+                        sleep(1)
+                        //gradlew('sonarqube')
                     }
                 }
                 stage('Code Coverage') {
                     steps {
-                        gradlew('jacocoTestCoverageVerification')
+                        sleep(1)
+                        //gradlew('jacocoTestCoverageVerification')
                     }
                 }
             }
         }
         stage('Build') {
             steps {
-                gradlew('assemble')
-                stash includes: '**/build/libs/*.jar', name: 'app'
-                gradlew('docker')
+                sleep(1)
+//                gradlew('assemble')
+//                stash includes: '**/build/libs/*.jar', name: 'app'
+//                gradlew('docker')
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+                    sleep(1)
+                    //archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
                 }
             }
         }
         stage('Publish') {
             steps {
-                gradlew('install')
-                gradlew('dockerPush')
+                sleep(1)
+//                gradlew('install')
+//                gradlew('dockerPush')
             }
         }
         stage('Acceptance Test') {
             steps {
-                startApp()
-                sleep(30) //wait for application to start
-                gradlew('acceptanceTest aggregate')
-
-                publishHTML target: [
-                        allowMissing         : false,
-                        alwaysLinkToLastBuild: false,
-                        keepAll              : true,
-                        reportDir            : 'build/reports/tests/acceptanceTest/',
-                        reportFiles          : 'index.html',
-                        reportName           : 'Acceptance Test Report'
-                ]
-                publishHTML target: [
-                        allowMissing         : false,
-                        alwaysLinkToLastBuild: false,
-                        keepAll              : true,
-                        reportDir            : 'build/cucumber/',
-                        reportFiles          : 'index.html',
-                        reportName           : 'Cucumber Report'
-                ]
-                publishHTML target: [
-                        allowMissing         : false,
-                        alwaysLinkToLastBuild: false,
-                        keepAll              : true,
-                        reportDir            : 'target/site/serenity/',
-                        reportFiles          : 'index.html',
-                        reportName           : 'Serenity Report'
-                ]
+                sleep(1)
+//                startApp()
+//                sleep(30) //wait for application to start
+//                gradlew('acceptanceTest aggregate')
+//
+//                publishHTML target: [
+//                        allowMissing         : false,
+//                        alwaysLinkToLastBuild: false,
+//                        keepAll              : true,
+//                        reportDir            : 'build/reports/tests/acceptanceTest/',
+//                        reportFiles          : 'index.html',
+//                        reportName           : 'Acceptance Test Report'
+//                ]
+//                publishHTML target: [
+//                        allowMissing         : false,
+//                        alwaysLinkToLastBuild: false,
+//                        keepAll              : true,
+//                        reportDir            : 'build/cucumber/',
+//                        reportFiles          : 'index.html',
+//                        reportName           : 'Cucumber Report'
+//                ]
+//                publishHTML target: [
+//                        allowMissing         : false,
+//                        alwaysLinkToLastBuild: false,
+//                        keepAll              : true,
+//                        reportDir            : 'target/site/serenity/',
+//                        reportFiles          : 'index.html',
+//                        reportName           : 'Serenity Report'
+//                ]
             }
             post {
                 always {
-                    junit 'build/test-results/acceptanceTest/**/*.xml'
-                    stopApp()
+                    sleep(1)
+//                    junit 'build/test-results/acceptanceTest/**/*.xml'
+//                    stopApp()
                 }
             }
         }
@@ -198,6 +211,6 @@ def dockerImage(){
 }
 
 def createEnvironment(){
-    resp = sh "eb create "+environmentName()+" -s"
+    sh "eb create "+environmentName()+" &>resp -s"
     echo 'resp = '+resp
 }
