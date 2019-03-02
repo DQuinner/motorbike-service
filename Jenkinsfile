@@ -195,5 +195,6 @@ def createDockerRunFile(){
 
 def environmentName(){
     def appProps = readProperties  file:'src/main/resources/application.properties'
-    return appProps['info.app.version']+currentTag()
+    def appVersion = appProps['info.app.version']
+    return appVersion.replace('.','')+currentTag()
 }
