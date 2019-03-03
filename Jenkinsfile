@@ -163,7 +163,7 @@ pipeline {
             steps {
                 createDockerRunFile()
                 createEnvironment()
-                environmentHealthCheck()
+                healthCheck()
             }
         }
     }
@@ -221,11 +221,31 @@ def createEnvironment(){
     }
 }
 
-def environmentHealthCheck(){
+def healthCheck(){
+    def url = environmentURL()
+    if(url!=null){
+        def appHealth = applicationHealthCheck(url)
+        if(!appHealth.equals('OK')){
+            error('Failed to start application on '+url)
+        }
+    }else{
+        error('Failed to create environment '+environmentName())
+    }
+}
+
+def environmentURL(){
     def response = sh (script: "aws elasticbeanstalk describe-environments --environment-names "
             +environmentName()+" --no-include-deleted --output json", returnStdout: true)
-    def jsonEnvironment = readJSON text: response
-    echo 'Status = '+jsonEnvironment.Environments[0].Status
-    echo 'HealthStatus = '+jsonEnvironment.Environments[0].HealthStatus
-    echo 'CNAME = '+jsonEnvironment.Environments[0].CNAME
+    def environment = readJSON text: response
+    if(environment.Environments[0].Status.equals('Ready') && environment.Environments[0].HealthStatus.equals('OK') && environment.Environments[0].Health.equals('GREEN')){
+        return environment.Environments[0].CNAME
+    }
+}
+
+def applicationHealthCheck(url){
+    def response = sh (script: "curl -X GET "+url+"/actuator/health", returnStdout: true)
+    def jsonHealth = readJSON text: response
+    if(jsonHealth.status.equals('UP')){
+        return 'OK'
+    }
 }
