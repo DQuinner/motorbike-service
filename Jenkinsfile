@@ -163,6 +163,7 @@ pipeline {
             steps {
                 createDockerRunFile()
                 createEnvironment()
+                environmentHealthCheck()
             }
         }
     }
@@ -218,4 +219,10 @@ def createEnvironment(){
     }else{
         echo 'environment not created'
     }
+}
+
+def environmentHealthCheck(){
+    def resp = sh (script: "eb status "+environmentName()+" -s", returnStdout: true)
+    echo 'status resp = '+resp
+    echo 'cname = '+resp.CNAME
 }
