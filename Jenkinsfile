@@ -225,7 +225,7 @@ def healthCheck(){
     def url = environmentURL()
     if(url!=null){
         def appHealth = applicationHealthCheck(url)
-        if(!appHealth.equals('OK')){
+        if(!appHealth.equals('UP')){
             error('Failed to start application on '+url)
         }
     }else{
@@ -238,7 +238,7 @@ def environmentURL(){
             +environmentName()+" --no-include-deleted --output json", returnStdout: true)
     def environment = readJSON text: response
     echo 'environment = '+environment
-    if(environment.Environments[0].Status.equals('Ready') && environment.Environments[0].HealthStatus.equals('OK') && environment.Environments[0].Health.equals('GREEN')){
+    if(environment.Environments[0].Status.equals('Ready') && environment.Environments[0].HealthStatus.equals('Ok') && environment.Environments[0].Health.equals('GREEN')){
         echo 'CNAME = '+ environment.Environments[0].CNAME
         return environment.Environments[0].CNAME
     }else{
@@ -250,6 +250,6 @@ def applicationHealthCheck(url){
     def response = sh (script: "curl -X GET "+url+"/actuator/health", returnStdout: true)
     def jsonHealth = readJSON text: response
     if(jsonHealth.status.equals('UP')){
-        return 'OK'
+        return 'UP'
     }
 }
