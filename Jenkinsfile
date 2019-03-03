@@ -4,69 +4,63 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                sleep(1)
-//                checkout([
-//                        $class: 'GitSCM',
-//                        branches: scm.branches,
-//                        extensions: scm.extensions + [[$class: 'LocalBranch']]
-//                ])
+                checkout([
+                        $class: 'GitSCM',
+                        branches: scm.branches,
+                        extensions: scm.extensions + [[$class: 'LocalBranch']]
+                ])
             }
         }
         stage('Compile') {
             steps {
-                sleep(1)
-                //gradlew('clean', 'classes')
+                gradlew('clean', 'classes')
             }
         }
         stage('Test') {
             parallel {
                 stage('Unit') {
                     steps {
-                        sleep(1)
-//                        gradlew('test', 'jacocoTestReport')
-//
-//                        publishHTML target: [
-//                                allowMissing         : false,
-//                                alwaysLinkToLastBuild: false,
-//                                keepAll              : true,
-//                                reportDir            : 'build/reports/tests/test/',
-//                                reportFiles          : 'index.html',
-//                                reportName           : 'Unit Test Report'
-//                        ]
-//                        publishHTML target: [
-//                                allowMissing         : false,
-//                                alwaysLinkToLastBuild: false,
-//                                keepAll              : true,
-//                                reportDir            : 'build/reports/jacoco/test/html/',
-//                                reportFiles          : 'index.html',
-//                                reportName           : 'Code Coverage Report'
-//                        ]
+                        gradlew('test', 'jacocoTestReport')
+
+                        publishHTML target: [
+                                allowMissing         : false,
+                                alwaysLinkToLastBuild: false,
+                                keepAll              : true,
+                                reportDir            : 'build/reports/tests/test/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Unit Test Report'
+                        ]
+                        publishHTML target: [
+                                allowMissing         : false,
+                                alwaysLinkToLastBuild: false,
+                                keepAll              : true,
+                                reportDir            : 'build/reports/jacoco/test/html/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Code Coverage Report'
+                        ]
                     }
                     post {
                         always {
-                            sleep(1)
-                            //junit 'build/test-results/test/**/*.xml'
+                            junit 'build/test-results/test/**/*.xml'
                         }
                     }
                 }
                 stage('Integration') {
                     steps {
-                        sleep(1)
-//                        gradlew('integrationTest')
-//
-//                        publishHTML target: [
-//                                allowMissing         : false,
-//                                alwaysLinkToLastBuild: false,
-//                                keepAll              : true,
-//                                reportDir            : 'build/reports/tests/integrationTest/',
-//                                reportFiles          : 'index.html',
-//                                reportName           : 'Integration Test Report'
-//                        ]
+                        gradlew('integrationTest')
+
+                        publishHTML target: [
+                                allowMissing         : false,
+                                alwaysLinkToLastBuild: false,
+                                keepAll              : true,
+                                reportDir            : 'build/reports/tests/integrationTest/',
+                                reportFiles          : 'index.html',
+                                reportName           : 'Integration Test Report'
+                        ]
                     }
                     post {
                         always {
-                            sleep(1)
-                            //junit 'build/test-results/integrationTest/**/*.xml'
+                            junit 'build/test-results/integrationTest/**/*.xml'
                         }
                     }
                 }
@@ -79,14 +73,12 @@ pipeline {
                         SONAR_LOGIN = credentials('SONARCLOUD_TOKEN')
                     }
                     steps {
-                        sleep(1)
-                        //gradlew('sonarqube')
+                        gradlew('sonarqube')
                     }
                 }
                 stage('Code Coverage') {
                     steps {
-                        sleep(1)
-                        //gradlew('jacocoTestCoverageVerification')
+                        gradlew('jacocoTestCoverageVerification')
                     }
                 }
             }
@@ -94,61 +86,57 @@ pipeline {
         stage('Build') {
             steps {
                 sleep(1)
-//                gradlew('assemble')
-//                stash includes: '**/build/libs/*.jar', name: 'app'
-//                gradlew('docker')
+                gradlew('assemble')
+                stash includes: '**/build/libs/*.jar', name: 'app'
+                gradlew('docker')
             }
             post {
                 always {
-                    sleep(1)
-                    //archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+                    archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
                 }
             }
         }
         stage('Publish') {
             steps {
-                sleep(1)
-//                gradlew('install')
-//                gradlew('dockerPush')
+                gradlew('install')
+                gradlew('dockerPush')
             }
         }
         stage('Acceptance Test') {
             steps {
-                sleep(1)
-//                startApp()
-//                sleep(30) //wait for application to start
-//                gradlew('acceptanceTest aggregate')
-//
-//                publishHTML target: [
-//                        allowMissing         : false,
-//                        alwaysLinkToLastBuild: false,
-//                        keepAll              : true,
-//                        reportDir            : 'build/reports/tests/acceptanceTest/',
-//                        reportFiles          : 'index.html',
-//                        reportName           : 'Acceptance Test Report'
-//                ]
-//                publishHTML target: [
-//                        allowMissing         : false,
-//                        alwaysLinkToLastBuild: false,
-//                        keepAll              : true,
-//                        reportDir            : 'build/cucumber/',
-//                        reportFiles          : 'index.html',
-//                        reportName           : 'Cucumber Report'
-//                ]
-//                publishHTML target: [
-//                        allowMissing         : false,
-//                        alwaysLinkToLastBuild: false,
-//                        keepAll              : true,
-//                        reportDir            : 'target/site/serenity/',
-//                        reportFiles          : 'index.html',
-//                        reportName           : 'Serenity Report'
-//                ]
+                startTestApp()
+                sleep(30) //wait for application to start
+                gradlew('acceptanceTest aggregate')
+
+                publishHTML target: [
+                        allowMissing         : false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll              : true,
+                        reportDir            : 'build/reports/tests/acceptanceTest/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Acceptance Test Report'
+                ]
+                publishHTML target: [
+                        allowMissing         : false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll              : true,
+                        reportDir            : 'build/cucumber/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Cucumber Report'
+                ]
+                publishHTML target: [
+                        allowMissing         : false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll              : true,
+                        reportDir            : 'target/site/serenity/',
+                        reportFiles          : 'index.html',
+                        reportName           : 'Serenity Report'
+                ]
             }
             post {
                 always {
-                    sleep(1)
-//                    junit 'build/test-results/acceptanceTest/**/*.xml'
-//                    stopApp()
+                    junit 'build/test-results/acceptanceTest/**/*.xml'
+                    stopTestApp()
                 }
             }
         }
@@ -172,13 +160,13 @@ def gradlew(String... args) {
     sh "./gradlew ${args.join(' ')} -s"
 }
 
-def startApp() {
+def startTestApp() {
     def appProps = readProperties  file:'src/main/resources/application.properties'
     def testProps = readProperties  file:'src/test/resources/application-test.properties'
     sh "docker run -p "+testProps['acceptance.test.port']+":"+testProps['acceptance.test.port']+" -t dquinner/motorbike-service:"+appProps['info.app.version']+currentTag()+" &"
 }
 
-def stopApp() {
+def stopTestApp() {
     def testProps = readProperties  file:'src/test/resources/application-test.properties'
     sh "curl -X POST "+testProps['acceptance.test.host']+":"+testProps['acceptance.test.port']+"/actuator/shutdown"
 }
@@ -212,20 +200,14 @@ def dockerImage(){
 }
 
 def createEnvironment(){
-    def resp = sh (script: "eb create "+environmentName()+" -s", returnStdout: true)
-    echo 'createEnvironment resp = '+resp
-    if(resp.contains('Successfully launched environment: '+environmentName())){
-        echo 'environment created'
-    }else{
-        echo 'environment not created'
-    }
+    sh (script: "eb create "+environmentName()+" -s", returnStdout: true)
 }
 
 def healthCheck(){
     def url = environmentURL()
     if(url!=null){
         def appHealth = applicationHealthCheck(url)
-        if(!appHealth.equals('UP')){
+        if(!'UP'.equals(appHealth)){
             error('Failed to start application on '+url)
         }
     }else{
@@ -234,22 +216,16 @@ def healthCheck(){
 }
 
 def environmentURL(){
-    def response = sh (script: "aws elasticbeanstalk describe-environments --environment-names "
-            +environmentName()+" --no-include-deleted --output json", returnStdout: true)
-    def environment = readJSON text: response
+    def environment = readJSON text: sh (script: "aws elasticbeanstalk describe-environments --environment-names "+environmentName()+" --no-include-deleted --output json", returnStdout: true)
     echo 'environment = '+environment
     if(('Ready').equals(environment.Environments[0].Status) && ('Ok').equals(environment.Environments[0].HealthStatus) && ('Green').equals(environment.Environments[0].Health)){
-        echo 'CNAME = '+ environment.Environments[0].CNAME
         return environment.Environments[0].CNAME
-    }else{
-        echo 'Environment status incorrect'
     }
 }
 
 def applicationHealthCheck(url){
-    def response = sh (script: "curl -X GET "+url+"/actuator/health", returnStdout: true)
-    def jsonHealth = readJSON text: response
-    if(jsonHealth.status.equals('UP')){
+    def jsonHealth = readJSON text: sh (script: "curl -X GET "+url+"/actuator/health", returnStdout: true)
+    if('UP'.equals(jsonHealth.status)){
         return 'UP'
     }
 }
