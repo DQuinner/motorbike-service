@@ -211,7 +211,6 @@ def dockerImage(){
 }
 
 def createEnvironment(){
-    def resp
-    sh "eb create "+environmentName()+" &>resp -s"
-    echo 'resp = '+resp
+    def resp = sh (script: "eb create "+environmentName()+" -s", returnStdout: true)
+    echo 'createEnvironment resp = '+resp
 }
