@@ -237,8 +237,12 @@ def environmentURL(){
     def response = sh (script: "aws elasticbeanstalk describe-environments --environment-names "
             +environmentName()+" --no-include-deleted --output json", returnStdout: true)
     def environment = readJSON text: response
+    echo 'environment = '+environment
     if(environment.Environments[0].Status.equals('Ready') && environment.Environments[0].HealthStatus.equals('OK') && environment.Environments[0].Health.equals('GREEN')){
+        echo 'CNAME = '+ environment.Environments[0].CNAME
         return environment.Environments[0].CNAME
+    }else{
+        echo 'environment status incorrect'
     }
 }
 
