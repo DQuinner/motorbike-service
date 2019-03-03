@@ -213,4 +213,9 @@ def dockerImage(){
 def createEnvironment(){
     def resp = sh (script: "eb create "+environmentName()+" -s", returnStdout: true)
     echo 'createEnvironment resp = '+resp
+    if(resp.contains('Successfully launched environment: '+environmentName())){
+        echo 'environment created'
+    }else{
+        echo 'environment not created'
+    }
 }
