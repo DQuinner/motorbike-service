@@ -225,7 +225,8 @@ def environmentHealthCheck(){
     def jsonEnvironment = sh (script: "aws elasticbeanstalk describe-environments --environment-names "
             +environmentName()+" --no-include-deleted --output json", returnStdout: true)
     echo 'jsonEnvironment = '+jsonEnvironment
-    echo 'Status = '+jsonEnvironment.Environments[0].Status
-    echo 'HealthStatus = '+jsonEnvironment.Environments[0].HealthStatus
-    echo 'CNAME = '+jsonEnvironment.Environments[0].CNAME
+    echo 'Environments = '+jsonEnvironment.Environments
+//    echo 'Status = '+jsonEnvironment.Environments[0].Status
+//    echo 'HealthStatus = '+jsonEnvironment.Environments[0].HealthStatus
+//    echo 'CNAME = '+jsonEnvironment.Environments[0].CNAME
 }
