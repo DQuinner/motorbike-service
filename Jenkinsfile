@@ -217,7 +217,6 @@ def healthCheck(){
 
 def environmentURL(){
     def environment = readJSON text: sh (script: "aws elasticbeanstalk describe-environments --environment-names "+environmentName()+" --no-include-deleted --output json", returnStdout: true)
-    echo 'environment = '+environment
     if(('Ready').equals(environment.Environments[0].Status) && ('Ok').equals(environment.Environments[0].HealthStatus) && ('Green').equals(environment.Environments[0].Health)){
         return environment.Environments[0].CNAME
     }
