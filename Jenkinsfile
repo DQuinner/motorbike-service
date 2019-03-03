@@ -222,8 +222,10 @@ def createEnvironment(){
 }
 
 def environmentHealthCheck(){
-    def jsonEnvironment = sh (script: "aws elasticbeanstalk describe-environments --environment-names "
+    def response = sh (script: "aws elasticbeanstalk describe-environments --environment-names "
             +environmentName()+" --no-include-deleted --output json", returnStdout: true)
+    writeJSON file: 'Env_'+environmentName()+'.json', json: response, pretty: 4
+    def jsonEnvironment = readJSON file: 'Env_'+environmentName()+'.json'
     echo 'jsonEnvironment = '+jsonEnvironment
     echo 'Environments = '+jsonEnvironment.Environments
 //    echo 'Status = '+jsonEnvironment.Environments[0].Status
