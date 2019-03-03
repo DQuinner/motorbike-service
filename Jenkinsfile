@@ -85,7 +85,6 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sleep(1)
                 gradlew('assemble')
                 stash includes: '**/build/libs/*.jar', name: 'app'
                 gradlew('docker')
