@@ -222,7 +222,7 @@ def createEnvironment(){
 }
 
 def environmentHealthCheck(){
-    def resp = sh (script: "eb status "+environmentName()+" -s", returnStdout: true)
+    def resp = sh (script: "eb status "+environmentName(), returnStdout: true)
     echo 'status resp = '+resp
     echo 'cname = '+resp.CNAME
 }
