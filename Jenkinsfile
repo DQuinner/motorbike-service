@@ -222,7 +222,10 @@ def createEnvironment(){
 }
 
 def environmentHealthCheck(){
-    def resp = sh (script: "eb status "+environmentName(), returnStdout: true)
-    echo 'status resp = '+resp
-    echo 'cname = '+resp.CNAME
+    def jsonEnvironment = sh (script: "aws elasticbeanstalk describe-environments --environment-names "
+            +environmentName()+" --no-include-deleted --output json", returnStdout: true)
+    echo 'jsonEnvironment = '+jsonEnvironment
+    echo 'Status = '+jsonEnvironment.Environments[0].Status
+    echo 'HealthStatus = '+jsonEnvironment.Environments[0].HealthStatus
+    echo 'CNAME = '+jsonEnvironment.Environments[0].CNAME
 }
